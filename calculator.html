@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>حاسبة الزكاة - تيسير</title>
+</head>
+
+<body>
+
+    <header>
+
+        <h1>تيسير</h1>
+
+        <p>منصة خدمات ديوان الزكاة الإلكترونية</p>
+
+        <nav>
+            <a href="main.html">الرئيسية</a> |
+            <a href="services.html">الخدمات</a> |
+            <a href="contact.html">تواصل معنا</a> |
+            <a href="index.html">تسجيل الخروج</a>
+        </nav>
+
+    </header>
+
+    <hr>
+
+    <main>
+
+        <h2>حاسبة الزكاة</h2>
+
+        <p>
+            تساعدك حاسبة الزكاة على تقدير قيمة الزكاة
+            حسب نوع المال أو الأصل الذي تريد حساب زكاته.
+        </p>
+
+        <p>
+            اختر نوع الزكاة لإدخال البيانات المناسبة لها.
+        </p>
+
+        
+        <br>
+
+        <hr>
+
+        <form>
+
+          <section>
+
+            <h3>أولاً: اختر نوع الزكاة</h3>
+
+            <label for="zakatType">
+                نوع الزكاة:
+            </label>
+
+            <br>
+
+            <select id="zakatType" name="zakatType" required>
+
+                <option value="">
+                    -- اختر نوع الزكاة --
+                </option>
+
+                <option value="money">
+                    زكاة النقود والأموال
+                </option>
+
+                <option value="gold-silver">
+                    زكاة الذهب والفضة
+                </option>
+
+                <option value="crops">
+                    زكاة الزروع والثمار
+                </option>
+
+                <option value="livestock">
+                    زكاة الأنعام
+                </option>
+
+                <option value="trade">
+                    زكاة عروض التجارة
+                </option>
+
+                <option value="stocks">
+                    زكاة الأسهم والاستثمارات
+                </option>
+
+            </select>
+
+        </section>
+
+
+            <section>
+
+                <h3>بيانات زكاة النقود والأموال</h3>
+
+                <label for="moneyAmount">
+                    قيمة المال:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="moneyAmount"
+                       name="moneyAmount"
+                       min="0"
+                       placeholder="أدخل قيمة المال">
+
+                <br><br>
+
+                <label for="moneyCurrency">
+                    العملة:
+                </label>
+
+                <br>
+
+                <select id="moneyCurrency"
+                        name="moneyCurrency">
+
+                    <option value="">
+                        -- اختر العملة --
+                    </option>
+
+                    <option value="sdg">
+                        الجنيه السوداني
+                    </option>
+
+                    <option value="usd">
+                        الدولار الأمريكي
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <label for="moneyPeriod">
+                    مدة امتلاك المال:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="moneyPeriod"
+                       name="moneyPeriod"
+                       min="0"
+                       placeholder="عدد الأشهر">
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <h3>بيانات زكاة الذهب والفضة</h3>
+
+                <label for="metalType">
+                    نوع المعدن:
+                </label>
+
+                <br>
+
+                <select id="metalType"
+                        name="metalType">
+
+                    <option value="">
+                        -- اختر النوع --
+                    </option>
+
+                    <option value="gold">
+                        الذهب
+                    </option>
+
+                    <option value="silver">
+                        الفضة
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <label for="metalWeight">
+                    الوزن بالجرام:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="metalWeight"
+                       name="metalWeight"
+                       min="0"
+                       placeholder="أدخل الوزن">
+
+                <br><br>
+
+                <label for="metalPurity">
+                    العيار:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="metalPurity"
+                       name="metalPurity"
+                       min="0"
+                       placeholder="أدخل العيار">
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <h3>بيانات زكاة الزروع والثمار</h3>
+
+                <label for="cropType">
+                    نوع المحصول:
+                </label>
+
+                <br>
+
+                <input type="text"
+                       id="cropType"
+                       name="cropType"
+                       placeholder="مثال: القمح">
+
+                <br><br>
+
+                <label for="cropQuantity">
+                    كمية المحصول:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="cropQuantity"
+                       name="cropQuantity"
+                       min="0"
+                       placeholder="أدخل كمية المحصول">
+
+                <br><br>
+
+                <label for="irrigationType">
+                    طريقة الري:
+                </label>
+
+                <br>
+
+                <select id="irrigationType"
+                        name="irrigationType">
+
+                    <option value="">
+                        -- اختر طريقة الري --
+                    </option>
+
+                    <option value="natural">
+                        ري طبيعي
+                    </option>
+
+                    <option value="artificial">
+                        ري بوسائل وتكاليف
+                    </option>
+
+                    <option value="mixed">
+                        ري مختلط
+                    </option>
+
+                </select>
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <h3>بيانات زكاة الأنعام</h3>
+
+                <label for="animalType">
+                    نوع الحيوان:
+                </label>
+
+                <br>
+
+                <select id="animalType"
+                        name="animalType">
+
+                    <option value="">
+                        -- اختر نوع الحيوان --
+                    </option>
+
+                    <option value="camels">
+                        الإبل
+                    </option>
+
+                    <option value="cattle">
+                        الأبقار
+                    </option>
+
+                    <option value="sheep">
+                        الغنم
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <label for="animalCount">
+                    عدد الحيوانات:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="animalCount"
+                       name="animalCount"
+                       min="0"
+                       placeholder="أدخل العدد">
+
+                <br><br>
+
+                <label for="animalAge">
+                    الفئة العمرية:
+                </label>
+
+                <br>
+
+                <select id="animalAge"
+                        name="animalAge">
+
+                    <option value="">
+                        -- اختر الفئة العمرية --
+                    </option>
+
+                    <option value="young">
+                        صغيرة
+                    </option>
+
+                    <option value="medium">
+                        متوسطة
+                    </option>
+
+                    <option value="adult">
+                        بالغة
+                    </option>
+
+                </select>
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <h3>بيانات زكاة عروض التجارة</h3>
+
+                <label for="goodsValue">
+                    قيمة البضائع:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="goodsValue"
+                       name="goodsValue"
+                       min="0"
+                       placeholder="أدخل قيمة البضائع">
+
+                <br><br>
+
+                <label for="tradeCash">
+                    النقد المتوفر:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="tradeCash"
+                       name="tradeCash"
+                       min="0"
+                       placeholder="أدخل قيمة النقد">
+
+                <br><br>
+
+                <label for="tradeDebts">
+                    الديون المستحقة لك:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="tradeDebts"
+                       name="tradeDebts"
+                       min="0"
+                       placeholder="أدخل قيمة الديون">
+
+                <br><br>
+
+                <label for="tradeCurrency">
+                    العملة:
+                </label>
+
+                <br>
+
+                <select id="tradeCurrency"
+                        name="tradeCurrency">
+
+                    <option value="">
+                        -- اختر العملة --
+                    </option>
+
+                    <option value="sdg">
+                        الجنيه السوداني
+                    </option>
+
+                    <option value="usd">
+                        الدولار الأمريكي
+                    </option>
+
+                </select>
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <h3>بيانات زكاة الأسهم والاستثمارات</h3>
+
+                <label for="investmentType">
+                    نوع الاستثمار:
+                </label>
+
+                <br>
+
+                <select id="investmentType"
+                        name="investmentType">
+
+                    <option value="">
+                        -- اختر نوع الاستثمار --
+                    </option>
+
+                    <option value="stocks">
+                        أسهم
+                    </option>
+
+                    <option value="investment">
+                        استثمار
+                    </option>
+
+                    <option value="funds">
+                        صناديق استثمارية
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <label for="investmentValue">
+                    قيمة الاستثمار:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="investmentValue"
+                       name="investmentValue"
+                       min="0"
+                       placeholder="أدخل قيمة الاستثمار">
+
+                <br><br>
+
+                <label for="shareCount">
+                    عدد الأسهم:
+                </label>
+
+                <br>
+
+                <input type="number"
+                       id="shareCount"
+                       name="shareCount"
+                       min="0"
+                       placeholder="أدخل عدد الأسهم">
+
+                <br><br>
+
+                <label for="investmentCurrency">
+                    العملة:
+                </label>
+
+                <br>
+
+                <select id="investmentCurrency"
+                        name="investmentCurrency">
+
+                    <option value="">
+                        -- اختر العملة --
+                    </option>
+
+                    <option value="sdg">
+                        الجنيه السوداني
+                    </option>
+
+                    <option value="usd">
+                        الدولار الأمريكي
+                    </option>
+
+                </select>
+
+            </section>
+
+            <hr>
+
+            <section>
+
+                <button type="submit">
+                    حساب الزكاة
+                </button>
+
+                <button type="reset">
+                    مسح البيانات
+                </button>
+
+            </section>
+
+        </form>
+
+        <br>
+
+        <hr>
+
+        <section>
+
+            <h2>نتيجة الحساب</h2>
+
+            <p>
+                بعد إجراء عملية الحساب ستظهر هنا قيمة
+                الزكاة التقديرية.
+            </p>
+
+            <p>
+                <strong>قيمة الزكاة:</strong>
+                سيتم حسابها لاحقًا.
+            </p>
+
+        </section>
+
+        <hr>
+
+        <section>
+
+            <h2>معلومات مهمة</h2>
+
+            <p>
+                تختلف طريقة حساب الزكاة حسب نوع المال أو
+                الأصل وشروط الزكاة المتعلقة به.
+            </p>
+
+            <p>
+                تقدم الحاسبة تقديرًا أوليًا بناءً على
+                البيانات التي يقوم المستخدم بإدخالها.
+            </p>
+
+            <p>
+                للحصول على معلومات إضافية يمكنك التواصل
+                معنا.
+            </p>
+
+            <a href="contact.html">
+                تواصل معنا
+            </a>
+
+        </section>
+
+        <hr>
+    </main>
+
+  
+
+    <footer>
+
+        <h3>تيسير</h3>
+
+        <p>
+            منصة خدمات ديوان الزكاة الإلكترونية
+        </p>
+
+        <p>
+            <a href="contact.html">تواصل معنا</a> 
+            
+        </p>
+
+        <p>
+            جميع الحقوق محفوظة &copy; 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة الموظفين - تيسير</title>
+
+</head>
+
+<body>
+
+
+    <header>
+
+        <h1>تيسير</h1>
+
+        <p>منصة خدمات ديوان الزكاة الإلكترونية</p>
+
+        <nav>
+
+            <a href="main.html">الرئيسية</a> |
+
+            <a href="services.html">الخدمات</a> |
+
+            <a href="admin.html">لوحة الإدارة</a> |
+
+            <a href="contact.html">تواصل معنا</a> |
+
+            <a href="index.html">تسجيل الخروج</a>
+
+        </nav>
+
+    </header>
+
+    <hr>
+
+
+    <main>
+
+        <h2>إدارة الموظفين</h2>
+
+        <p>
+            من خلال هذه الصفحة يمكن للمدير إدارة بيانات الموظفين
+            وعرض معلوماتهم وتعديلها وإضافة موظفين جدد ومتابعة
+            حالة الموظفين وصلاحياتهم.
+        </p>
+
+
+        
+
+        <section>
+
+            <h3>البحث عن موظف</h3>
+
+            <form>
+
+                <label for="searchEmployee">
+                    البحث بالاسم أو رقم الموظف:
+                </label>
+
+                <br>
+
+                <input
+                    type="search"
+                    id="searchEmployee"
+                    name="searchEmployee"
+                    placeholder="أدخل اسم الموظف أو رقم الموظف">
+
+                <button type="submit">
+                    بحث
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <hr>
+
+
+        
+        <section>
+
+            <h3>إضافة موظف جديد</h3>
+
+            <form>
+
+                <label for="employeeId">
+                    رقم الموظف:
+                </label>
+
+                <br>
+
+                <input
+                    type="text"
+                    id="employeeId"
+                    name="employeeId"
+                    placeholder="أدخل رقم الموظف"
+                    required>
+
+                <br><br>
+
+
+                <label for="employeeName">
+                    الاسم الكامل:
+                </label>
+
+                <br>
+
+                <input
+                    type="text"
+                    id="employeeName"
+                    name="employeeName"
+                    placeholder="أدخل الاسم الكامل"
+                    required>
+
+                <br><br>
+
+
+                <label for="nationalId">
+                    الرقم الوطني:
+                </label>
+
+                <br>
+
+                <input
+                    type="text"
+                    id="nationalId"
+                    name="nationalId"
+                    placeholder="أدخل الرقم الوطني"
+                    required>
+
+                <br><br>
+
+
+                <label for="employeePhone">
+                    رقم الهاتف:
+                </label>
+
+                <br>
+
+                <input
+                    type="tel"
+                    id="employeePhone"
+                    name="employeePhone"
+                    placeholder="أدخل رقم الهاتف"
+                    required>
+
+                <br><br>
+
+
+                <label for="employeeEmail">
+                    البريد الإلكتروني:
+                </label>
+
+                <br>
+
+                <input
+                    type="email"
+                    id="employeeEmail"
+                    name="employeeEmail"
+                    placeholder="أدخل البريد الإلكتروني"
+                    required>
+
+                <br><br>
+
+
+                <label for="jobTitle">
+                    المسمى الوظيفي:
+                </label>
+
+                <br>
+
+                <select
+                    id="jobTitle"
+                    name="jobTitle"
+                    required>
+
+                    <option value="">
+                        -- اختر الوظيفة --
+                    </option>
+
+                    <option value="employee">
+                        موظف
+                    </option>
+
+                    <option value="supervisor">
+                        مشرف
+                    </option>
+
+                    <option value="manager">
+                        مدير
+                    </option>
+
+                </select>
+
+                <br><br>
+
+
+                <label for="department">
+                    القسم:
+                </label>
+
+                <br>
+
+                <select
+                    id="department"
+                    name="department"
+                    required>
+
+                    <option value="">
+                        -- اختر القسم --
+                    </option>
+
+                    <option value="requests">
+                        قسم الطلبات
+                    </option>
+
+                    <option value="beneficiaries">
+                        قسم المستفيدين
+                    </option>
+
+                    <option value="finance">
+                        القسم المالي
+                    </option>
+
+                    <option value="support">
+                        الدعم الفني
+                    </option>
+
+                    <option value="administration">
+                        الإدارة
+                    </option>
+
+                </select>
+
+                <br><br>
+
+
+                <label for="permission">
+                    صلاحية المستخدم:
+                </label>
+
+                <br>
+
+                <select
+                    id="permission"
+                    name="permission"
+                    required>
+
+                    <option value="">
+                        -- اختر الصلاحية --
+                    </option>
+
+                    <option value="employee">
+                        موظف
+                    </option>
+
+                    <option value="manager">
+                        مدير
+                    </option>
+
+                </select>
+
+                <br><br>
+
+
+                <label for="hireDate">
+                    تاريخ التعيين:
+                </label>
+
+                <br>
+
+                <input
+                    type="date"
+                    id="hireDate"
+                    name="hireDate"
+                    required>
+
+                <br><br>
+
+
+                <label for="employeeStatus">
+                    حالة الموظف:
+                </label>
+
+                <br>
+
+                <select
+                    id="employeeStatus"
+                    name="employeeStatus">
+
+                    <option value="active">
+                        نشط
+                    </option>
+
+                    <option value="inactive">
+                        غير نشط
+                    </option>
+
+                </select>
+
+                <br><br>
+
+
+                <button type="submit">
+                    إضافة الموظف
+                </button>
+
+                <button type="reset">
+                    مسح البيانات
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <hr>
+
+
+        
+        <section>
+
+            <h3>قائمة الموظفين</h3>
+
+            <table border="1">
+
+                <thead>
+
+                    <tr>
+
+                        <th>رقم الموظف</th>
+
+                        <th>الاسم</th>
+
+                        <th>الهاتف</th>
+
+                        <th>الوظيفة</th>
+
+                        <th>القسم</th>
+
+                        <th>الصلاحية</th>
+
+                        <th>الحالة</th>
+
+                        <th>العمليات</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>1001</td>
+
+                        <td>أحمد محمد</td>
+
+                        <td>0000000000</td>
+
+                        <td>موظف</td>
+
+                        <td>قسم الطلبات</td>
+
+                        <td>موظف</td>
+
+                        <td>نشط</td>
+
+                        <td>
+
+                            <button type="button">
+                                عرض
+                            </button>
+
+                            <button type="button">
+                                تعديل
+                            </button>
+
+                            <button type="button">
+                                تعطيل
+                            </button>
+
+                            <button type="button">
+                                حذف
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>1002</td>
+
+                        <td>محمد علي</td>
+
+                        <td>0000000000</td>
+
+                        <td>مشرف</td>
+
+                        <td>قسم المستفيدين</td>
+
+                        <td>موظف</td>
+
+                        <td>نشط</td>
+
+                        <td>
+
+                            <button type="button">
+                                عرض
+                            </button>
+
+                            <button type="button">
+                                تعديل
+                            </button>
+
+                            <button type="button">
+                                تعطيل
+                            </button>
+
+                            <button type="button">
+                                حذف
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <hr>
+
+
+        
+        <section>
+
+            <h3>معلومات الموظف</h3>
+
+            <p>
+                عند اختيار موظف من القائمة ستظهر هنا معلوماته
+                التفصيلية.
+            </p>
+
+
+            <dl>
+
+                <dt>رقم الموظف:</dt>
+                <dd>1001</dd>
+
+
+                <dt>الاسم الكامل:</dt>
+                <dd>أحمد محمد</dd>
+
+
+                <dt>الرقم الوطني:</dt>
+                <dd>0000000000</dd>
+
+
+                <dt>رقم الهاتف:</dt>
+                <dd>0000000000</dd>
+
+
+                <dt>البريد الإلكتروني:</dt>
+                <dd>employee@example.com</dd>
+
+
+                <dt>المسمى الوظيفي:</dt>
+                <dd>موظف</dd>
+
+
+                <dt>القسم:</dt>
+                <dd>قسم الطلبات</dd>
+
+
+                <dt>الصلاحية:</dt>
+                <dd>موظف</dd>
+
+
+                <dt>تاريخ التعيين:</dt>
+                <dd>2026-01-01</dd>
+
+
+                <dt>حالة الموظف:</dt>
+                <dd>نشط</dd>
+
+            </dl>
+
+
+            <br>
+
+
+            <button type="button">
+                تعديل معلومات الموظف
+            </button>
+
+            <button type="button">
+                تعطيل الموظف
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+    <hr>
+
+
+    <!-- تذييل الصفحة -->
+
+    <footer>
+
+        <h3>تيسير</h3>
+
+        <p>
+            منصة خدمات ديوان الزكاة الإلكترونية
+        </p>
+
+      
+
+        <p>
+            جميع الحقوق محفوظة &copy; 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

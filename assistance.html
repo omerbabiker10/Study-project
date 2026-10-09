@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>طلب مساعدة - تيسير</title>
+</head>
+
+<body>
+
+    <header>
+
+        <h1>تيسير</h1>
+
+        <p>منصة خدمات ديوان الزكاة الإلكترونية</p>
+
+        <nav>
+            <a href="main.html">الرئيسية</a> |
+            <a href="services.html">الخدمات</a> |
+            <a href="contact.html">تواصل معنا</a> |
+            <a href="index.html">تسجيل الخروج</a>
+        </nav>
+
+    </header>
+
+    <hr>
+
+    <main>
+
+        <h2>طلب مساعدة</h2>
+
+        <p>
+            يمكنك من خلال هذه الصفحة تقديم طلب للحصول على
+            المساعدة المناسبة حسب حالتك واحتياجك.
+        </p>
+
+        <form>
+
+            <label for="fullName">الاسم الكامل:</label>
+            <br>
+
+            <input type="text"
+                   id="fullName"
+                   name="fullName"
+                   placeholder="أدخل الاسم الكامل"
+                   required>
+
+            <br><br>
+
+
+            <label for="phone">رقم الهاتف:</label>
+            <br>
+
+            <input type="tel"
+                   id="phone"
+                   name="phone"
+                   placeholder="أدخل رقم الهاتف"
+                   required>
+
+            <br><br>
+
+
+            <label for="nationalId">الرقم الوطني:</label>
+            <br>
+
+            <input type="text"
+                   id="nationalId"
+                   name="nationalId"
+                   placeholder="أدخل الرقم الوطني"
+                   required>
+
+            <br><br>
+
+
+            <label for="helpType">نوع المساعدة المطلوبة:</label>
+            <br>
+
+            <select id="helpType" name="helpType" required>
+
+                <option value="">-- اختر نوع المساعدة --</option>
+
+                <option value="social">
+                    مساعدة اجتماعية
+                </option>
+
+                <option value="medical">
+                    مساعدة علاجية
+                </option>
+
+                <option value="education">
+                    مساعدة تعليمية
+                </option>
+
+                <option value="emergency">
+                    مساعدة طارئة
+                </option>
+
+            </select>
+
+            <br><br>
+
+
+            
+            <label for="socialStatus">الحالة الاجتماعية:</label>
+            <br>
+
+            <select id="socialStatus" name="socialStatus" required>
+
+                <option value="">-- اختر الحالة --</option>
+
+                <option value="single">أعزب</option>
+
+                <option value="married">متزوج</option>
+
+                <option value="divorced">مطلق</option>
+
+                <option value="widowed">أرمل</option>
+
+            </select>
+
+            <br><br>
+
+
+            <label for="familyMembers">
+                عدد أفراد الأسرة:
+            </label>
+            <br>
+
+            <input type="number"
+                   id="familyMembers"
+                   name="familyMembers"
+                   min="1"
+                   placeholder="أدخل عدد أفراد الأسرة"
+                   required>
+
+            <br><br>
+
+
+            <label for="income">
+                الدخل الشهري:
+            </label>
+            <br>
+
+            <input type="number"
+                   id="income"
+                   name="income"
+                   min="0"
+                   placeholder="أدخل الدخل الشهري"
+                   required>
+
+            <br><br>
+
+
+            <label for="description">
+                وصف الحالة:
+            </label>
+            <br>
+
+            <textarea id="description"
+                      name="description"
+                      rows="6"
+                      cols="40"
+                      placeholder="اكتب تفاصيل الحالة وسبب طلب المساعدة"
+                      required></textarea>
+
+            <br><br>
+
+
+            <label for="document">
+                إرفاق مستند إن وجد:
+            </label>
+            <br>
+
+            <input type="file"
+                   id="document"
+                   name="document">
+
+            <br><br>
+
+
+            <button type="submit">
+                إرسال طلب المساعدة
+            </button>
+
+            <button type="reset">
+                مسح البيانات
+            </button>
+
+        </form>
+
+    </main>
+
+    <hr>
+
+    <footer>
+
+        <h3>تيسير</h3>
+
+        <p>
+            منصة خدمات ديوان الزكاة الإلكترونية
+        </p>
+
+        <p>
+            <a href="contact.html">تواصل معنا</a> 
+        </p>
+
+        <p>
+            جميع الحقوق محفوظة &copy; 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>
