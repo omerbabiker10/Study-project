@@ -1,0 +1,861 @@
+:root {
+    --green-900: #14532D;
+    --green-800: #166534;
+    --green-700: #15803D;
+    --green-100: #DCFCE7;
+    --green-50: #F0FDF4;
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --text: #1F2937;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --danger: #B91C1C;
+    --danger-bg: #FEF2F2;
+    --danger-border: #FECACA;
+    --warn: #B45309;
+    --warn-bg: #FFFBEB;
+    --warn-border: #FDE68A;
+    --radius: 10px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 18px rgba(22, 101, 52, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text);
+    background-color: var(--bg);
+    direction: rtl;
+}
+
+::selection {
+    background-color: var(--green-100);
+    color: var(--green-900);
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.5;
+}
+
+h1 {
+    margin: 0;
+    font-size: 32px;
+    color: var(--surface);
+}
+
+h2 {
+    color: var(--green-800);
+    font-size: 26px;
+}
+
+h3 {
+    color: var(--green-700);
+    font-size: 21px;
+}
+
+header {
+    background: linear-gradient(135deg, var(--green-800), var(--green-700));
+    color: var(--surface);
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+header h1 {
+    margin-bottom: 5px;
+}
+
+header h2 {
+    margin: 5px 0 0;
+    font-size: 19px;
+    font-weight: normal;
+    color: #ECFDF5;
+}
+
+header p {
+    margin: 5px 0 18px;
+    color: #ECFDF5;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 15px;
+    font-size: 0;
+}
+
+nav a {
+    display: inline-block;
+    color: var(--surface);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 7px;
+    transition: background-color 0.2s ease;
+}
+
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+main {
+    width: 92%;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(22, 101, 52, 0.07);
+}
+
+main > h2,
+main > p {
+    text-align: center;
+}
+
+section {
+    margin: 20px 0;
+    padding: 18px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+section h2:first-child,
+section h3:first-child {
+    margin-top: 0;
+}
+
+p {
+    margin: 12px 0;
+}
+
+ul,
+ol {
+    padding-right: 28px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+a {
+    color: var(--green-700);
+}
+
+main a {
+    font-weight: 600;
+}
+
+main a:hover {
+    color: var(--green-800);
+}
+
+main a[href$=".html"] {
+    display: inline-block;
+    margin: 4px 0;
+}
+
+main > section > a[href="index.html"] {
+    padding: 10px 22px;
+    margin: 8px 0;
+    background-color: var(--green-700);
+    color: var(--surface);
+    text-decoration: none;
+    border-radius: 7px;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > section > a[href="index.html"]:hover {
+    background-color: var(--green-800);
+    color: var(--surface);
+    box-shadow: var(--shadow-md);
+}
+
+main > p a {
+    text-decoration: none;
+}
+
+main > p a:hover {
+    text-decoration: underline;
+}
+
+article {
+    margin: 15px 0;
+    padding: 18px;
+    background-color: var(--green-50);
+    border: 1px solid var(--green-100);
+    border-right: 4px solid var(--green-700);
+    border-radius: 8px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+article:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+article h3 {
+    margin-top: 0;
+    color: var(--green-800);
+}
+
+article p {
+    margin-bottom: 0;
+}
+
+form {
+    width: 100%;
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 25px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+form:has(#userType),
+form:has(#confirmPassword) {
+    max-width: 450px;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--green-800);
+}
+
+input,
+select,
+textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #D1D5DB;
+    border-radius: 7px;
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    display: inline-block;
+    width: auto;
+    margin-left: 8px;
+    padding: 0;
+}
+
+form br,
+section > br {
+    display: none;
+}
+
+form input,
+form select,
+form textarea {
+    margin-bottom: 18px;
+}
+
+form input[type="checkbox"],
+form input[type="radio"] {
+    margin-bottom: 0;
+}
+
+input[type="file"] {
+    padding: 10px;
+    background-color: var(--green-50);
+    cursor: pointer;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--green-700);
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--muted);
+}
+
+button {
+    display: inline-block;
+    padding: 11px 22px;
+    margin: 5px 3px;
+    border: none;
+    border-radius: 7px;
+    background-color: var(--green-700);
+    color: var(--surface);
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: var(--green-800);
+    box-shadow: var(--shadow-md);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+button[type="reset"] {
+    background-color: var(--muted);
+}
+
+button[type="reset"]:hover {
+    background-color: #4B5563;
+}
+
+form button {
+    width: 100%;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid rgba(21, 128, 61, 0.4);
+    outline-offset: 2px;
+}
+
+hr {
+    height: 1px;
+    border: none;
+    background-color: var(--border);
+    margin: 25px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+th,
+td {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 10px;
+    text-align: right;
+    vertical-align: middle;
+}
+
+th {
+    background-color: var(--green-50);
+    color: var(--green-800);
+    border-bottom: 2px solid var(--green-700);
+}
+
+td button {
+    padding: 7px 14px;
+    margin: 3px;
+    font-size: 14px;
+    background-color: var(--surface);
+    color: var(--green-700);
+    border: 1px solid var(--green-700);
+    box-shadow: none;
+}
+
+td button:hover {
+    background-color: var(--green-50);
+    color: var(--green-800);
+    box-shadow: none;
+}
+
+td button:nth-child(3):not(:last-child) {
+    background-color: var(--warn-bg);
+    color: var(--warn);
+    border-color: var(--warn-border);
+}
+
+td button:nth-child(3):not(:last-child):hover {
+    background-color: #FEF3C7;
+    color: var(--warn);
+}
+
+td button:last-child:nth-child(3),
+td button:last-child:nth-child(4) {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger-border);
+}
+
+td button:last-child:nth-child(3):hover,
+td button:last-child:nth-child(4):hover {
+    background-color: #FEE2E2;
+    color: var(--danger);
+}
+
+dl {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+dt {
+    font-weight: bold;
+    color: var(--green-800);
+}
+
+dd {
+    margin: 0;
+    padding: 5px 10px;
+    background-color: var(--bg);
+    border-radius: 5px;
+}
+
+footer {
+    margin-top: 35px;
+    padding: 25px 15px;
+    background-color: var(--green-900);
+    color: var(--surface);
+    text-align: center;
+}
+
+footer h3 {
+    color: var(--surface);
+}
+
+footer p {
+    margin: 8px 0;
+    color: #ECFDF5;
+}
+
+footer a {
+    color: var(--surface);
+}
+
+@media (min-width: 601px) {
+
+    main section table:has(thead) tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    main section table:has(thead) tbody tr:nth-child(even) td {
+        background-color: #F9FAFB;
+    }
+
+    main section table:has(thead) tbody tr:hover td {
+        background-color: var(--green-50);
+    }
+
+    main section table:not(:has(thead)) {
+        display: block;
+        margin: 15px 0;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+    }
+
+    main section table:not(:has(thead)) tbody {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        column-gap: 12px;
+    }
+
+    main section table:not(:has(thead)) tr {
+        display: contents;
+    }
+
+    main section table:not(:has(thead)) th {
+        padding: 12px 6px;
+        font-size: 14px;
+        text-align: center;
+        background-color: var(--green-50);
+        border: 1px solid var(--green-100);
+        border-bottom: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    main section table:not(:has(thead)) td {
+        padding: 10px 6px 14px;
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        color: var(--green-800);
+        background-color: var(--surface);
+        border: 1px solid var(--green-100);
+        border-top: none;
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: var(--shadow-sm);
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+
+    main section table:has(thead) {
+        display: block;
+        overflow-x: auto;
+    }
+
+    main section table:not(:has(thead)) th {
+        font-size: 12px;
+    }
+
+    main section table:not(:has(thead)) td {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    body {
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    header {
+        padding: 20px 12px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    header h2 {
+        font-size: 17px;
+    }
+
+    h3 {
+        font-size: 19px;
+    }
+
+    nav {
+        gap: 2px;
+    }
+
+    nav a {
+        padding: 7px 9px;
+        font-size: 14px;
+    }
+
+    main {
+        width: 94%;
+        margin: 18px auto;
+        padding: 12px;
+    }
+
+    section {
+        padding: 12px;
+        margin: 15px 0;
+    }
+
+    form {
+        padding: 18px;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    button {
+        max-width: 100%;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    form button {
+        font-size: 16px;
+    }
+
+    main section table {
+        display: block;
+        width: 100%;
+        margin: 18px 0;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+        background: transparent;
+    }
+
+    main section table thead {
+        display: none;
+    }
+
+    main section table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    main section table tbody tr {
+        display: block;
+        width: 100%;
+        margin: 0 0 18px;
+        padding: 10px;
+        background: #FFFFFF;
+        border: 1px solid #D1FAE5;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(22, 101, 52, 0.08);
+    }
+
+    main section table tbody tr td {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        min-width: 0;
+        padding: 10px 5px;
+        border: none;
+        border-bottom: 1px solid #E5E7EB;
+        background: #FFFFFF;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    main section table tbody tr td:last-child {
+        border-bottom: none;
+    }
+
+    main section table tbody tr td:last-child button {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 40px;
+        padding: 9px 7px;
+        margin: 3px;
+        white-space: nowrap;
+    }
+
+    main section table tbody tr td:only-child {
+        display: block;
+    }
+
+    main section table tbody tr td[colspan] {
+        display: block;
+    }
+
+    main section table:not(:has(thead)) {
+        display: block;
+    }
+
+    main section table:not(:has(thead)) tr:first-child {
+        display: none;
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(1)::before {
+        content: "إجمالي الطلبات:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(2)::before {
+        content: "قيد المراجعة:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(3)::before {
+        content: "المقبولة:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(4)::before {
+        content: "المرفوضة:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(5)::before {
+        content: "المستفيدون:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td:nth-child(6)::before {
+        content: "الموظفون:";
+    }
+
+    main section table:not(:has(thead)) tr:nth-child(2) td::before {
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(1)::before {
+        content: "رقم الطلب:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(2)::before {
+        content: "اسم المستفيد:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(3)::before {
+        content: "نوع المساعدة:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(4)::before {
+        content: "تاريخ الطلب:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(5)::before {
+        content: "الحالة:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:nth-child(6)::before {
+        content: "العمليات:";
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(1)::before {
+        content: "رقم المستفيد:";
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(2)::before {
+        content: "الاسم:";
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(3)::before {
+        content: "رقم الهاتف:";
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(4)::before {
+        content: "نوع الحالة:";
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(5)::before {
+        content: "الحالة:";
+    }
+
+    main section:has(#searchBeneficiary) table thead + tbody tr td:nth-child(6)::before {
+        content: "العمليات:";
+    }
+
+    main section table thead + tbody tr td:nth-child(1):nth-last-child(8)::before {
+        content: "رقم الموظف:";
+    }
+
+    main section table thead + tbody tr td:nth-child(2):nth-last-child(7)::before {
+        content: "الاسم:";
+    }
+
+    main section table thead + tbody tr td:nth-child(3):nth-last-child(6)::before {
+        content: "الهاتف:";
+    }
+
+    main section table thead + tbody tr td:nth-child(4):nth-last-child(5)::before {
+        content: "الوظيفة:";
+    }
+
+    main section table thead + tbody tr td:nth-child(5):nth-last-child(4)::before {
+        content: "القسم:";
+    }
+
+    main section table thead + tbody tr td:nth-child(6):nth-last-child(3)::before {
+        content: "الصلاحية:";
+    }
+
+    main section table thead + tbody tr td:nth-child(7):nth-last-child(2)::before {
+        content: "الحالة:";
+    }
+
+    main section table thead + tbody tr td:nth-child(8):nth-last-child(1)::before {
+        content: "العمليات:";
+    }
+
+    main section table thead + tbody tr td:nth-child(1):nth-last-child(4)::before {
+        content: "اسم البرنامج:";
+    }
+
+    main section table thead + tbody tr td:nth-child(2):nth-last-child(3)::before {
+        content: "الوصف:";
+    }
+
+    main section table thead + tbody tr td:nth-child(3):nth-last-child(2)::before {
+        content: "الحالة:";
+    }
+
+    main section table thead + tbody tr td:nth-child(4):nth-last-child(1)::before {
+        content: "العمليات:";
+    }
+
+    main section table thead + tbody tr td::before {
+        font-weight: bold;
+        color: #166534;
+        flex-shrink: 0;
+    }
+
+    main section table thead + tbody tr td:has(button:nth-child(4)) {
+        flex-wrap: wrap;
+    }
+
+    main section table thead + tbody tr td:has(button:nth-child(4))::before {
+        flex-basis: 100%;
+    }
+
+    dl {
+        display: block;
+    }
+
+    dt {
+        margin-top: 12px;
+    }
+
+    dd {
+        margin-bottom: 8px;
+        padding: 8px;
+    }
+
+    footer {
+        padding: 20px 12px;
+    }
+}
