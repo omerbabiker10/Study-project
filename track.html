@@ -67,6 +67,88 @@
         <hr>
 
 
+        <section class="staff-only">
+
+            <h2>تحديث حالة الطلب</h2>
+
+            <p>
+                هذا القسم مخصص للموظفين والمدير لتحديث حالة
+                طلب المساعدة بعد مراجعته.
+            </p>
+
+            <form action="#" method="post">
+
+                <label for="updateRequestNumber">
+                    رقم الطلب:
+                </label>
+
+                <br>
+
+                <input type="text"
+                       id="updateRequestNumber"
+                       name="updateRequestNumber"
+                       placeholder="أدخل رقم الطلب"
+                       required>
+
+                <br><br>
+
+                <label for="newStatus">
+                    الحالة الجديدة:
+                </label>
+
+                <br>
+
+                <select id="newStatus" name="newStatus" required>
+
+                    <option value="">
+                        -- اختر الحالة --
+                    </option>
+
+                    <option value="review">
+                        قيد المراجعة
+                    </option>
+
+                    <option value="processing">
+                        قيد المعالجة
+                    </option>
+
+                    <option value="approved">
+                        مقبول
+                    </option>
+
+                    <option value="rejected">
+                        مرفوض
+                    </option>
+
+                </select>
+
+                <br><br>
+
+                <label for="statusNote">
+                    ملاحظة أو سبب القرار:
+                </label>
+
+                <br>
+
+                <textarea id="statusNote"
+                          name="statusNote"
+                          rows="4"
+                          placeholder="اكتب سبب القرار، ويلزم توضيح السبب عند رفض الطلب"></textarea>
+
+                <br><br>
+
+                <button type="submit">
+                    حفظ التحديث
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <hr>
+
+
         <section>
 
             <h2>حالات الطلب</h2>
