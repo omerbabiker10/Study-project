@@ -1,3 +1,5 @@
+const demoMode = true;
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const namePattern = /^[\p{L}\s'.-]+$/u;
 const phonePattern = /^\+?[0-9]{9,15}$/;
@@ -25,6 +27,12 @@ const showFieldError = (input, message) => {
     box.hidden = !message;
     input.classList.toggle("input-error", Boolean(message));
     input.setAttribute("aria-invalid", message ? "true" : "false");
+};
+
+const clearFieldError = (input) => {
+    if (document.getElementById(input.id + "-error")) {
+        showFieldError(input, "");
+    }
 };
 
 const getFormMessageBox = (form) => {
@@ -68,7 +76,7 @@ const validateField = (form, rules, id) => {
     return message === "";
 };
 
-const setupForm = (form, rules, successText) => {
+const setupForm = (form, rules, successText, onSuccess) => {
     form.noValidate = true;
     const ids = Object.keys(rules);
     const touched = {};
@@ -90,6 +98,25 @@ const setupForm = (form, rules, successText) => {
                 }
             });
         });
+        input.addEventListener("change", () => {
+            if (touched[id] || input.type === "file") {
+                touched[id] = true;
+                validateField(form, rules, id);
+            }
+        });
+    });
+
+    form.addEventListener("reset", () => {
+        setTimeout(() => {
+            ids.forEach((id) => {
+                const input = form.querySelector("#" + id);
+                touched[id] = false;
+                if (input) {
+                    clearFieldError(input);
+                }
+            });
+            clearFormMessage(form);
+        }, 0);
     });
 
     form.addEventListener("submit", (event) => {
@@ -110,7 +137,13 @@ const setupForm = (form, rules, successText) => {
             return;
         }
 
-        showFormMessage(form, successText, "success");
+        if (!demoMode) {
+            form.submit();
+            return;
+        }
+
+        const customText = onSuccess ? onSuccess(form) : "";
+        showFormMessage(form, customText || successText, "success");
     });
 };
 
@@ -498,7 +531,7 @@ const calcMetal = (values) => {
     };
 };
 
-const calcCrops = (values) => {
+const computeCrops = (values) => {
     if (values.quantity < zakatConfig.nisabCropsKg) {
         return {
             headline: "لا زكاة عليك؛ لأن المحصول لم يبلغ النصاب.",
@@ -544,6 +577,22 @@ const calcLivestock = (values) => {
     return { headline: "الواجب في " + formatNumber(values.count) + " من " + name + ": " + due + ".", notes };
 };
 
+const processedProductPattern = /دقيق|طحين|خبز|عجين|زيت|سميد|نشا|رغيف|مطحون|معلب|مصنع|عصير|مربى|معجنات/;
+
+const calcCrops = (values) => {
+    const result = computeCrops(values);
+    const extra = [];
+    if (values.cropName) {
+        if (processedProductPattern.test(values.cropName)) {
+            extra.push("تنبيه: «" + values.cropName + "» منتج مصنّع، والزكاة تجب على الحب أو الثمر عند الحصاد. أدخل كمية المحصول قبل الطحن أو التصنيع، فوزن المنتج يختلف عن وزن الحب.");
+        }
+        extra.push("المحصول المُدخل: " + values.cropName + ". نوع المحصول لا يغيّر النصاب ولا النسبة، فالحساب يعتمد على الكمية وطريقة الري فقط.");
+    }
+    extra.push("تُضم الأصناف من الجنس الواحد وزروع السنة الواحدة بعضها إلى بعض لبلوغ النصاب (المادة 25).");
+    result.notes = extra.concat(result.notes);
+    return result;
+};
+
 const calcRules = {
     money: {
         moneyAmount: (value) => positiveNumberMessage(value, "قيمة المال"),
@@ -572,6 +621,16 @@ const calcRules = {
         metalHawl: (value) => selectMessage(value, "يرجى تحديد هل مرّ حول كامل.")
     },
     crops: {
+        cropType: (value) => {
+            const name = value.trim();
+            if (!name) {
+                return "";
+            }
+            if (!/^[\p{L}\s'.-]+$/u.test(name)) {
+                return "يجب أن يحتوي اسم المحصول على حروف فقط.";
+            }
+            return name.length > 40 ? "اسم المحصول لا يزيد على 40 حرفًا." : "";
+        },
         cropQuantity: (value) => positiveNumberMessage(value, "كمية المحصول"),
         irrigationType: (value) => selectMessage(value, "يرجى اختيار طريقة الري.")
     },
@@ -663,7 +722,11 @@ const readValues = (type) => {
         };
     }
     if (type === "crops") {
-        return { quantity: number("cropQuantity"), irrigation: text("irrigationType") };
+        return {
+            cropName: text("cropType").trim(),
+            quantity: number("cropQuantity"),
+            irrigation: text("irrigationType")
+        };
     }
     if (type === "livestock") {
         return { animal: text("animalType"), count: number("animalCount"), hawl: text("animalHawl") };
@@ -702,12 +765,6 @@ if (calculatorForm && zakatResult) {
     zakatResult.setAttribute("aria-live", "polite");
 
     const sectionOf = (id) => document.getElementById(id).closest("section");
-
-    const clearFieldError = (input) => {
-        if (document.getElementById(input.id + "-error")) {
-            showFieldError(input, "");
-        }
-    };
 
     const renderResult = (headline, notes) => {
         zakatResult.textContent = "";
@@ -822,3 +879,337 @@ if (calculatorForm && zakatResult) {
 
     updateVisibility();
 }
+
+const normalizeArabic = (text) =>
+    normalizeDigits(text)
+        .toLowerCase()
+        .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/\s+/g, " ")
+        .trim();
+
+const validateRequestNumber = (value) => {
+    const number = normalizeDigits(value.trim());
+    if (!number) {
+        return "يرجى إدخال رقم الطلب.";
+    }
+    if (!/^[A-Za-z0-9-]{3,20}$/.test(number)) {
+        return "رقم الطلب غير صحيح، استخدم أرقامًا أو حروفًا إنجليزية فقط.";
+    }
+    return "";
+};
+
+const longTextRule = (label, min, max) => (value) => {
+    const text = value.trim();
+    if (!text) {
+        return "يرجى إدخال " + label + ".";
+    }
+    if (text.length < min) {
+        return "يجب ألا يقل " + label + " عن " + min + " أحرف.";
+    }
+    if (text.length > max) {
+        return "يجب ألا يزيد " + label + " على " + max + " حرف.";
+    }
+    return "";
+};
+
+const validateDocument = (value, form) => {
+    const input = form.querySelector("#document");
+    if (!input || !input.files || input.files.length === 0) {
+        return "";
+    }
+    const file = input.files[0];
+    const extension = file.name.split(".").pop().toLowerCase();
+    if (!["pdf", "jpg", "jpeg", "png"].includes(extension)) {
+        return "نوع الملف غير مدعوم، المسموح: PDF أو JPG أو PNG.";
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        return "حجم الملف يجب ألا يزيد على 5 ميجابايت.";
+    }
+    return "";
+};
+
+const findDataTable = (input) => {
+    const section = input.closest("section");
+    const local = section ? section.querySelector("table:has(thead)") : null;
+    return local || document.querySelector("main table:has(thead)");
+};
+
+const showTableMessage = (table, text) => {
+    let box = table.previousElementSibling;
+    if (!box || !box.classList.contains("table-message")) {
+        box = document.createElement("p");
+        box.className = "form-message form-message-success table-message";
+        box.setAttribute("role", "status");
+        table.insertAdjacentElement("beforebegin", box);
+    }
+    box.textContent = text;
+    box.hidden = false;
+    clearTimeout(box.hideTimer);
+    box.hideTimer = setTimeout(() => {
+        box.hidden = true;
+    }, 7000);
+};
+
+const filterTable = (table, query) => {
+    const text = normalizeArabic(query);
+    const rows = Array.from(table.querySelectorAll("tbody tr:not(.no-results)"));
+    let visible = 0;
+    rows.forEach((row) => {
+        const rowText = Array.from(row.cells)
+            .filter((cell) => !cell.querySelector("button"))
+            .map((cell) => cell.textContent)
+            .join(" ");
+        const match = !text || normalizeArabic(rowText).includes(text);
+        row.hidden = !match;
+        if (match) {
+            visible += 1;
+        }
+    });
+
+    let empty = table.querySelector("tbody tr.no-results");
+    if (!empty) {
+        empty = document.createElement("tr");
+        empty.className = "no-results";
+        const cell = document.createElement("td");
+        cell.colSpan = table.querySelectorAll("thead th").length || 1;
+        cell.textContent = "لا توجد نتائج مطابقة للبحث.";
+        empty.appendChild(cell);
+        table.tBodies[0].appendChild(empty);
+    }
+    empty.hidden = visible > 0;
+};
+
+const setupTableSearch = (inputId) => {
+    const input = document.getElementById(inputId);
+    if (!input) {
+        return;
+    }
+    const form = input.closest("form");
+    const table = findDataTable(input);
+    if (!table) {
+        return;
+    }
+    input.addEventListener("input", () => filterTable(table, input.value));
+    if (form) {
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            filterTable(table, input.value);
+        });
+        form.addEventListener("reset", () => {
+            setTimeout(() => filterTable(table, ""), 0);
+        });
+    }
+};
+
+const addEmployeeRow = (form) => {
+    const table = document.querySelector("main table:has(thead)");
+    if (!table) {
+        return "";
+    }
+    const read = (id) => form.querySelector("#" + id).value.trim();
+    const labelOf = (id) => {
+        const select = form.querySelector("#" + id);
+        return select.options[select.selectedIndex].textContent.replace(/\s+/g, " ").trim();
+    };
+    const active = read("employeeStatus") !== "inactive";
+
+    const row = document.createElement("tr");
+    [
+        normalizeDigits(read("employeeId")),
+        read("employeeName"),
+        normalizeDigits(read("employeePhone")),
+        labelOf("jobTitle"),
+        labelOf("department"),
+        labelOf("permission")
+    ].forEach((value) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
+    });
+
+    const statusCell = document.createElement("td");
+    const badge = document.createElement("span");
+    badge.className = "status " + (active ? "status-active" : "status-inactive");
+    badge.textContent = active ? "نشط" : "غير نشط";
+    statusCell.appendChild(badge);
+    row.appendChild(statusCell);
+
+    const actionsCell = document.createElement("td");
+    [
+        ["عرض", ""],
+        ["تعديل", ""],
+        [active ? "تعطيل" : "تفعيل", "btn-warning"],
+        ["حذف", "btn-danger"]
+    ].forEach(([label, className]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        if (className) {
+            button.className = className;
+        }
+        actionsCell.appendChild(button);
+    });
+    row.appendChild(actionsCell);
+
+    table.tBodies[0].appendChild(row);
+    return "تمت إضافة الموظف إلى القائمة في العرض التجريبي، وسيُحفظ نهائيًا عند ربط النظام بقاعدة البيانات.";
+};
+
+const requestSearchInput = document.getElementById("requestNumber");
+const requestSearchForm = requestSearchInput ? requestSearchInput.closest("form") : null;
+
+if (requestSearchForm) {
+    setupForm(
+        requestSearchForm,
+        { requestNumber: validateRequestNumber },
+        "تم التحقق من رقم الطلب. عرض حالة الطلب سيُنفذ لاحقًا عند ربط النظام بقاعدة البيانات."
+    );
+}
+
+const updateRequestInput = document.getElementById("updateRequestNumber");
+const updateStatusForm = updateRequestInput ? updateRequestInput.closest("form") : null;
+
+if (updateStatusForm) {
+    setupForm(
+        updateStatusForm,
+        {
+            updateRequestNumber: validateRequestNumber,
+            newStatus: (value) => selectMessage(value, "يرجى اختيار الحالة الجديدة."),
+            statusNote: (value, form) => {
+                const note = value.trim();
+                if (form.querySelector("#newStatus").value === "rejected" && note.length < 10) {
+                    return "يلزم توضيح سبب الرفض (10 أحرف على الأقل).";
+                }
+                return note.length > 500 ? "الملاحظة لا تزيد على 500 حرف." : "";
+            }
+        },
+        "تم التحقق من البيانات. حفظ تحديث الحالة سيُنفذ لاحقًا عند ربط النظام بقاعدة البيانات."
+    );
+}
+
+const helpTypeInput = document.getElementById("helpType");
+const assistanceForm = helpTypeInput ? helpTypeInput.closest("form") : null;
+
+if (assistanceForm) {
+    setupForm(
+        assistanceForm,
+        {
+            fullName: validateFullName,
+            phone: validatePhone,
+            helpType: (value) => selectMessage(value, "يرجى اختيار نوع المساعدة."),
+            socialStatus: (value) => selectMessage(value, "يرجى اختيار الحالة الاجتماعية."),
+            familyMembers: (value) => {
+                const base = positiveNumberMessage(value, "عدد أفراد الأسرة");
+                if (base) {
+                    return base;
+                }
+                const members = Number(value);
+                return Number.isInteger(members) && members <= 50 ? "" : "أدخل عددًا صحيحًا لا يزيد على 50.";
+            },
+            income: (value) => nonNegativeMessage(value, "الدخل الشهري", true),
+            description: longTextRule("وصف الحالة", 15, 1000),
+            document: validateDocument
+        },
+        "تم التحقق من بيانات الطلب بنجاح. تقديم الطلب وحفظه سيُنفذان لاحقًا عند ربط النظام بقاعدة البيانات."
+    );
+}
+
+const commentInput = document.getElementById("comment");
+const contactForm = commentInput ? commentInput.closest("form") : null;
+
+if (contactForm) {
+    setupForm(
+        contactForm,
+        {
+            fullName: validateFullName,
+            email: validateEmail,
+            comment: longTextRule("التعليق", 10, 1000)
+        },
+        "تم التحقق من رسالتك بنجاح. إرسالها سيُنفذ لاحقًا عند ربط النظام بالخادم."
+    );
+}
+
+setupTableSearch("searchBeneficiary");
+setupTableSearch("searchEmployee");
+
+const employeeIdInput = document.getElementById("employeeId");
+const employeeForm = employeeIdInput ? employeeIdInput.closest("form") : null;
+
+if (employeeForm) {
+    const todayText = () => {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return now.getFullYear() + "-" + month + "-" + day;
+    };
+
+    setupForm(
+        employeeForm,
+        {
+            employeeId: (value) => {
+                const id = normalizeDigits(value.trim());
+                if (!id) {
+                    return "يرجى إدخال رقم الموظف.";
+                }
+                if (!/^[A-Za-z0-9-]{3,20}$/.test(id)) {
+                    return "رقم الموظف غير صحيح، استخدم أرقامًا أو حروفًا إنجليزية فقط.";
+                }
+                const table = document.querySelector("main table:has(thead)");
+                const exists = table && Array.from(table.querySelectorAll("tbody tr td:first-child"))
+                    .some((cell) => normalizeDigits(cell.textContent.trim()) === id);
+                return exists ? "رقم الموظف مستخدم مسبقًا." : "";
+            },
+            employeeName: validateFullName,
+            employeePhone: validatePhone,
+            employeeEmail: validateEmail,
+            jobTitle: (value) => selectMessage(value, "يرجى اختيار المسمى الوظيفي."),
+            department: (value) => selectMessage(value, "يرجى اختيار القسم."),
+            permission: (value) => selectMessage(value, "يرجى اختيار الصلاحية."),
+            hireDate: (value) => {
+                if (!value) {
+                    return "يرجى إدخال تاريخ التعيين.";
+                }
+                return value > todayText() ? "لا يمكن أن يكون تاريخ التعيين في المستقبل." : "";
+            }
+        },
+        "تم التحقق من بيانات الموظف بنجاح.",
+        addEmployeeRow
+    );
+}
+
+document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button || !button.closest("td")) {
+        return;
+    }
+    const row = button.closest("tr");
+    const table = button.closest("table");
+
+    if (button.classList.contains("btn-danger")) {
+        if (!window.confirm("هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن العملية.")) {
+            return;
+        }
+        row.remove();
+        showTableMessage(table, "تم حذف السجل من العرض التجريبي، وسيصبح الحذف دائمًا عند ربط النظام بقاعدة البيانات.");
+        return;
+    }
+
+    if (button.classList.contains("btn-warning")) {
+        const badge = row.querySelector(".status");
+        if (!badge) {
+            return;
+        }
+        const active = badge.classList.contains("status-active");
+        const question = active ? "هل تريد تعطيل هذا الموظف؟" : "هل تريد تفعيل هذا الموظف؟";
+        if (!window.confirm(question)) {
+            return;
+        }
+        badge.classList.toggle("status-active", !active);
+        badge.classList.toggle("status-inactive", active);
+        badge.textContent = active ? "غير نشط" : "نشط";
+        button.textContent = active ? "تفعيل" : "تعطيل";
+    }
+});
