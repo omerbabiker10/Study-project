@@ -220,7 +220,9 @@ const zakatConfig = {
     zakatRate: 0.025,
     hawlMonths: 12,
     goldSpotUsdPerGram24: 134.63,
-    goldSpotDate: "12 أكتوبر 2026"
+    goldSpotDate: "12 أكتوبر 2026",
+    goldMarketSdgPerGram21: 1075000,
+    goldMarketDate: "20 أكتوبر 2026"
 };
 
 const goldSdgPerGram21 = zakatConfig.nisabMoneySdg / zakatConfig.nisabGoldGrams;
@@ -241,6 +243,23 @@ const nisabNote = (currency) => {
     }
     return "النصاب المعتمد " + formatNumber(zakatConfig.nisabMoneySdg) +
         " جنيه سوداني، وهو نصاب زكاة المال للعام " + zakatConfig.nisabYear + " المنشور في موقع ديوان الزكاة السوداني.";
+};
+
+const marketNisabSdg = zakatConfig.goldMarketSdgPerGram21 * zakatConfig.nisabGoldGrams;
+
+const marketGapNote = (amount, currency) => {
+    if (currency !== "sdg" || amount < zakatConfig.nisabMoneySdg || amount >= marketNisabSdg) {
+        return null;
+    }
+    return "تنبيه: المبلغ بلغ نصاب الديوان المنشور (" + formatNumber(zakatConfig.nisabMoneySdg) +
+        " جنيه للعام " + zakatConfig.nisabYear + ") لكنه أقل من قيمة 85 جرامًا من الذهب عيار 21 بسعر السوق التأشيري الحالي (نحو " +
+        formatNumber(marketNisabSdg) + " جنيه بتاريخ " + zakatConfig.goldMarketDate +
+        ")، وهو سعر غير رسمي. فإن كان الحكم عندك بسعر اليوم فقد لا تجب الزكاة، فراجع ديوان الزكاة قبل الإخراج.";
+};
+
+const withMarketGap = (notes, amount, currency) => {
+    const gap = marketGapNote(amount, currency);
+    return gap ? [gap].concat(notes) : notes;
 };
 
 const generalNote = "هذه الحاسبة إرشادية ولا تغني عن سؤال أهل العلم أو مراجعة ديوان الزكاة.";
@@ -379,7 +398,7 @@ const calcMoney = (values) => {
     const zakat = values.amount * zakatConfig.zakatRate;
     return {
         headline: formatNumber(zakat) + " " + currencyName(values.currency) + " (2.5% من " + formatNumber(values.amount) + ").",
-        notes: [nisabNote(values.currency), generalNote]
+        notes: withMarketGap([nisabNote(values.currency), generalNote], values.amount, values.currency)
     };
 };
 
@@ -400,7 +419,7 @@ const calcTrade = (values) => {
     }
     return {
         headline: formatNumber(base * zakatConfig.zakatRate) + " " + currencyName(values.currency) + " (2.5% من الوعاء).",
-        notes
+        notes: withMarketGap(notes, base, values.currency)
     };
 };
 
@@ -420,7 +439,7 @@ const calcStocks = (values) => {
     }
     return {
         headline: formatNumber(values.value * zakatConfig.zakatRate) + " " + currencyName(values.currency) + " (2.5% من القيمة).",
-        notes
+        notes: withMarketGap(notes, values.value, values.currency)
     };
 };
 
