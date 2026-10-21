@@ -312,6 +312,54 @@ textarea::placeholder {
     color: var(--muted);
 }
 
+input.input-error,
+select.input-error,
+textarea.input-error {
+    border-color: var(--danger);
+}
+
+input.input-error:focus,
+select.input-error:focus,
+textarea.input-error:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15);
+}
+
+.field-error {
+    margin: -12px 0 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--danger);
+}
+
+.form-message {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.form-message-success {
+    background-color: var(--green-50);
+    color: var(--green-800);
+    border-color: var(--green-100);
+}
+
+.form-message-error {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger-border);
+}
+
+.result-note {
+    margin: 6px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+}
+
 button {
     display: inline-block;
     padding: 11px 22px;
@@ -408,28 +456,61 @@ td button:hover {
     box-shadow: none;
 }
 
-td button:nth-child(3):not(:last-child) {
+td button.btn-warning {
     background-color: var(--warn-bg);
     color: var(--warn);
     border-color: var(--warn-border);
 }
 
-td button:nth-child(3):not(:last-child):hover {
+td button.btn-warning:hover {
     background-color: #FEF3C7;
     color: var(--warn);
 }
 
-td button:last-child:nth-child(3),
-td button:last-child:nth-child(4) {
+td button.btn-danger {
     background-color: var(--danger-bg);
     color: var(--danger);
     border-color: var(--danger-border);
 }
 
-td button:last-child:nth-child(3):hover,
-td button:last-child:nth-child(4):hover {
+td button.btn-danger:hover {
     background-color: #FEE2E2;
     color: var(--danger);
+}
+
+.status {
+    display: inline-block;
+    padding: 2px 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.7;
+}
+
+.status-active,
+.status-approved {
+    background-color: var(--green-100);
+    color: var(--green-800);
+    border-color: #BBF7D0;
+}
+
+.status-pending {
+    background-color: var(--warn-bg);
+    color: var(--warn);
+    border-color: var(--warn-border);
+}
+
+.status-rejected {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger-border);
+}
+
+.status-inactive {
+    background-color: #F3F4F6;
+    color: #4B5563;
+    border-color: #D1D5DB;
 }
 
 dl {

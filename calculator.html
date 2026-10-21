@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>حاسبة الزكاة - تيسير</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 
 </head><body><header>
 
@@ -193,7 +194,51 @@
                 id="metalPurity"
                 name="metalPurity"
                 min="0"
-                placeholder="أدخل العيار">
+                placeholder="الذهب مثل 21، والفضة بالألف مثل 925">
+
+            <br><br>
+
+            <label for="metalUse">
+                طبيعة الاستعمال:
+            </label>
+
+            <br>
+
+            <select id="metalUse" name="metalUse">
+
+                <option value="" selected></option>
+
+                <option value="saved">
+                    مدّخر أو للتجارة
+                </option>
+
+                <option value="jewelry">
+                    حلي للاستعمال الشخصي
+                </option>
+
+            </select>
+
+            <br><br>
+
+            <label for="metalHawl">
+                هل مرّ على المال حول هجري كامل؟
+            </label>
+
+            <br>
+
+            <select id="metalHawl" name="metalHawl">
+
+                <option value="" selected></option>
+
+                <option value="yes">
+                    نعم، مرّ حول هجري كامل
+                </option>
+
+                <option value="no">
+                    لا، لم يمرّ حول كامل
+                </option>
+
+            </select>
 
         </section>
 
@@ -218,7 +263,7 @@
             <br><br>
 
             <label for="cropQuantity">
-                كمية المحصول:
+                كمية المحصول بالكيلوجرام:
             </label>
 
             <br>
@@ -329,6 +374,28 @@
 
             </select>
 
+            <br><br>
+
+            <label for="animalHawl">
+                هل مرّ على المال حول هجري كامل؟
+            </label>
+
+            <br>
+
+            <select id="animalHawl" name="animalHawl">
+
+                <option value="" selected></option>
+
+                <option value="yes">
+                    نعم، مرّ حول هجري كامل
+                </option>
+
+                <option value="no">
+                    لا، لم يمرّ حول كامل
+                </option>
+
+            </select>
+
         </section>
 
         <hr>
@@ -398,6 +465,28 @@
 
                 <option value="usd">
                     الدولار الأمريكي
+                </option>
+
+            </select>
+
+            <br><br>
+
+            <label for="tradeHawl">
+                هل مرّ على المال حول هجري كامل؟
+            </label>
+
+            <br>
+
+            <select id="tradeHawl" name="tradeHawl">
+
+                <option value="" selected></option>
+
+                <option value="yes">
+                    نعم، مرّ حول هجري كامل
+                </option>
+
+                <option value="no">
+                    لا، لم يمرّ حول كامل
                 </option>
 
             </select>
@@ -486,6 +575,28 @@
 
             </select>
 
+            <br><br>
+
+            <label for="investmentHawl">
+                هل مرّ على المال حول هجري كامل؟
+            </label>
+
+            <br>
+
+            <select id="investmentHawl" name="investmentHawl">
+
+                <option value="" selected></option>
+
+                <option value="yes">
+                    نعم، مرّ حول هجري كامل
+                </option>
+
+                <option value="no">
+                    لا، لم يمرّ حول كامل
+                </option>
+
+            </select>
+
         </section>
 
         <hr>
@@ -517,7 +628,7 @@
             الزكاة التقديرية.
         </p>
 
-        <p>
+        <p id="zakatResult">
             <strong>قيمة الزكاة:</strong>
             سيتم حسابها لاحقًا.
         </p>
