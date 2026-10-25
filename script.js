@@ -86,12 +86,11 @@ const setupForm = (form, rules, successText, onSuccess) => {
         if (!input) {
             return;
         }
-        input.addEventListener("blur", () => {
-            touched[id] = true;
-            validateField(form, rules, id);
-        });
         input.addEventListener("input", () => {
             clearFormMessage(form);
+            if (id === "confirmPassword" && input.value) {
+                touched[id] = true;
+            }
             ids.forEach((otherId) => {
                 if (touched[otherId]) {
                     validateField(form, rules, otherId);
@@ -142,8 +141,12 @@ const setupForm = (form, rules, successText, onSuccess) => {
             return;
         }
 
-        const customText = onSuccess ? onSuccess(form) : "";
-        showFormMessage(form, customText || successText, "success");
+        const outcome = onSuccess ? onSuccess(form) : null;
+        if (outcome && typeof outcome === "object") {
+            showFormMessage(form, outcome.text, outcome.type);
+            return;
+        }
+        showFormMessage(form, outcome || successText, "success");
     });
 };
 
@@ -1058,19 +1061,126 @@ const addEmployeeRow = (form) => {
     return "تمت إضافة الموظف إلى القائمة في العرض التجريبي، وسيُحفظ نهائيًا عند ربط النظام بقاعدة البيانات.";
 };
 
+const demoRequests = [
+    { id: "1001", name: "أحمد محمد", type: "اجتماعية", date: "2026-10-01", status: "pending", note: "" },
+    { id: "1002", name: "محمد علي", type: "علاجية", date: "2026-10-02", status: "approved", note: "" }
+];
+
+const requestStatuses = {
+    pending: { label: "قيد المراجعة", css: "status-pending" },
+    processing: { label: "قيد المعالجة", css: "status-processing" },
+    approved: { label: "مقبول", css: "status-approved" },
+    rejected: { label: "مرفوض", css: "status-rejected" }
+};
+
+const statusKeyByOption = {
+    review: "pending",
+    processing: "processing",
+    approved: "approved",
+    rejected: "rejected"
+};
+
 const requestSearchInput = document.getElementById("requestNumber");
 const requestSearchForm = requestSearchInput ? requestSearchInput.closest("form") : null;
+
+const renderTrackCard = (request) => {
+    let card = document.getElementById("trackResult");
+    if (!card) {
+        card = document.createElement("div");
+        card.id = "trackResult";
+        card.className = "result-card";
+        requestSearchForm.insertAdjacentElement("afterend", card);
+    }
+    card.hidden = false;
+    card.dataset.requestId = request.id;
+    card.textContent = "";
+
+    const title = document.createElement("h3");
+    title.textContent = "بيانات الطلب رقم " + request.id;
+    card.appendChild(title);
+
+    const list = document.createElement("dl");
+    const addRow = (label, content) => {
+        const term = document.createElement("dt");
+        term.textContent = label + ":";
+        const detail = document.createElement("dd");
+        if (typeof content === "string") {
+            detail.textContent = content;
+        } else {
+            detail.appendChild(content);
+        }
+        list.appendChild(term);
+        list.appendChild(detail);
+    };
+
+    const status = requestStatuses[request.status];
+    const badge = document.createElement("span");
+    badge.className = "status " + status.css;
+    badge.textContent = status.label;
+
+    addRow("اسم المستفيد", request.name);
+    addRow("نوع المساعدة", request.type);
+    addRow("تاريخ الطلب", request.date);
+    addRow("حالة الطلب", badge);
+    if (request.note) {
+        addRow("ملاحظة الموظف", request.note);
+    }
+    card.appendChild(list);
+};
+
+const hideTrackCard = () => {
+    const card = document.getElementById("trackResult");
+    if (card) {
+        card.hidden = true;
+    }
+};
+
+const notFoundMessage = "لم يُعثر على طلب بهذا الرقم. في العرض التجريبي استخدم 1001 أو 1002.";
+
+const trackSearch = (form) => {
+    const id = normalizeDigits(form.querySelector("#requestNumber").value.trim());
+    const request = demoRequests.find((item) => item.id === id);
+    if (!request) {
+        hideTrackCard();
+        return { text: notFoundMessage, type: "error" };
+    }
+    renderTrackCard(request);
+    const card = document.getElementById("trackResult");
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    return { text: "تم العثور على الطلب، وتجد بياناته أسفل النموذج.", type: "success" };
+};
 
 if (requestSearchForm) {
     setupForm(
         requestSearchForm,
         { requestNumber: validateRequestNumber },
-        "تم التحقق من رقم الطلب. عرض حالة الطلب سيُنفذ لاحقًا عند ربط النظام بقاعدة البيانات."
+        "تم التحقق من رقم الطلب.",
+        trackSearch
     );
+    requestSearchForm.addEventListener("reset", hideTrackCard);
 }
 
 const updateRequestInput = document.getElementById("updateRequestNumber");
 const updateStatusForm = updateRequestInput ? updateRequestInput.closest("form") : null;
+
+const trackUpdate = (form) => {
+    const id = normalizeDigits(form.querySelector("#updateRequestNumber").value.trim());
+    const request = demoRequests.find((item) => item.id === id);
+    if (!request) {
+        return { text: notFoundMessage, type: "error" };
+    }
+    request.status = statusKeyByOption[form.querySelector("#newStatus").value];
+    request.note = form.querySelector("#statusNote").value.trim();
+    const card = document.getElementById("trackResult");
+    if (card && !card.hidden && card.dataset.requestId === id) {
+        renderTrackCard(request);
+    }
+    return {
+        text: "تم تحديث حالة الطلب رقم " + id + " إلى «" + requestStatuses[request.status].label +
+            "» في العرض التجريبي، وسيُحفظ نهائيًا عند ربط النظام بقاعدة البيانات.",
+        type: "success"
+    };
+};
 
 if (updateStatusForm) {
     setupForm(
@@ -1086,7 +1196,8 @@ if (updateStatusForm) {
                 return note.length > 500 ? "الملاحظة لا تزيد على 500 حرف." : "";
             }
         },
-        "تم التحقق من البيانات. حفظ تحديث الحالة سيُنفذ لاحقًا عند ربط النظام بقاعدة البيانات."
+        "تم التحقق من البيانات.",
+        trackUpdate
     );
 }
 
@@ -1180,36 +1291,548 @@ if (employeeForm) {
     );
 }
 
+const todayDate = () => {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return now.getFullYear() + "-" + month + "-" + day;
+};
+
+const showToast = (text) => {
+    const old = document.querySelector(".toast");
+    if (old) {
+        old.remove();
+    }
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.setAttribute("role", "status");
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+};
+
+const tableKinds = {
+    "رقم الطلب": "requests",
+    "رقم المستفيد": "beneficiaries",
+    "اسم البرنامج": "programs",
+    "رقم الموظف": "employees"
+};
+
+const statusClasses = {
+    "قيد المراجعة": "status-pending",
+    "قيد المعالجة": "status-processing",
+    "مقبول": "status-approved",
+    "مرفوض": "status-rejected",
+    "نشط": "status-active",
+    "غير نشط": "status-inactive"
+};
+
+const statIndexByStatus = { "قيد المراجعة": 1, "مقبول": 2, "مرفوض": 3 };
+
+const tableKind = (table) => {
+    const first = table.querySelector("thead th");
+    return first ? tableKinds[first.textContent.trim()] || "" : "";
+};
+
+const tableByKind = (kind) =>
+    Array.from(document.querySelectorAll("main table:has(thead)")).find((table) => tableKind(table) === kind) || null;
+
+const headersOf = (table) =>
+    Array.from(table.querySelectorAll("thead th"))
+        .map((th) => th.textContent.trim())
+        .filter((header) => header !== "العمليات");
+
+const dataCells = (row) => Array.from(row.cells).filter((cell) => !cell.querySelector("button"));
+
+const makeBadge = (label) => {
+    const badge = document.createElement("span");
+    badge.className = "status " + (statusClasses[label] || "");
+    badge.textContent = label;
+    return badge;
+};
+
+const makeButton = (label, className) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    if (className) {
+        button.className = className;
+    }
+    return button;
+};
+
+const adjustStat = (index, delta) => {
+    const statsTable = document.querySelector("main table:not(:has(thead))");
+    if (!statsTable) {
+        return;
+    }
+    const cell = statsTable.querySelectorAll("td")[index];
+    if (!cell) {
+        return;
+    }
+    const value = Number(normalizeDigits(cell.textContent).replace(/[,،\s]/g, ""));
+    if (Number.isFinite(value)) {
+        cell.textContent = String(Math.max(0, value + delta));
+    }
+};
+
+const csvCell = (text) => '"' + text.replace(/"/g, '""') + '"';
+
+const tableToCsv = (table) => {
+    const header = headersOf(table).map(csvCell).join(",");
+    const rows = Array.from(table.querySelectorAll("tbody tr:not(.no-results)"))
+        .filter((row) => !row.hidden)
+        .map((row) =>
+            dataCells(row)
+                .map((cell) => csvCell(cell.textContent.replace(/\s+/g, " ").trim()))
+                .join(",")
+        );
+    return "\uFEFF" + [header].concat(rows).join("\r\n");
+};
+
+const downloadCsv = (text, fileName) => {
+    const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
+const downloadReport = (kind) => {
+    const table = tableByKind(kind);
+    if (!table) {
+        showToast("لا توجد بيانات متاحة لهذا التقرير في هذه الصفحة.");
+        return;
+    }
+    downloadCsv(tableToCsv(table), kind + "-report-" + todayDate() + ".csv");
+    showToast("تم تنزيل التقرير بصيغة CSV، ويُفتح في Excel.");
+};
+
+const createModal = (title) => {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const dialog = document.createElement("div");
+    dialog.className = "modal";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-label", title);
+
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    const body = document.createElement("div");
+    dialog.appendChild(heading);
+    dialog.appendChild(body);
+    backdrop.appendChild(dialog);
+
+    const previousFocus = document.activeElement;
+    const onKey = (event) => {
+        if (event.key === "Escape") {
+            close();
+        }
+    };
+    const close = () => {
+        document.removeEventListener("keydown", onKey);
+        backdrop.remove();
+        document.body.classList.remove("modal-open");
+        if (previousFocus && previousFocus.focus) {
+            previousFocus.focus();
+        }
+    };
+
+    backdrop.addEventListener("click", (event) => {
+        if (event.target === backdrop) {
+            close();
+        }
+    });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(backdrop);
+    document.body.classList.add("modal-open");
+    return { dialog, body, close };
+};
+
+const openViewModal = (row) => {
+    const table = row.closest("table");
+    const headers = headersOf(table);
+    const modal = createModal("عرض البيانات");
+    const list = document.createElement("dl");
+
+    dataCells(row).forEach((cell, index) => {
+        const term = document.createElement("dt");
+        term.textContent = (headers[index] || "") + ":";
+        const detail = document.createElement("dd");
+        const badge = cell.querySelector(".status");
+        if (badge) {
+            detail.appendChild(badge.cloneNode(true));
+        } else {
+            detail.textContent = cell.textContent.trim();
+        }
+        list.appendChild(term);
+        list.appendChild(detail);
+    });
+    modal.body.appendChild(list);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeButton = makeButton("إغلاق", "btn-secondary");
+    closeButton.addEventListener("click", modal.close);
+    actions.appendChild(closeButton);
+    modal.body.appendChild(actions);
+    closeButton.focus();
+};
+
+const modalFieldMessage = (spec) => {
+    const value = spec.input.value.trim();
+    if (!value) {
+        return "هذا الحقل مطلوب.";
+    }
+    if (spec.type === "tel") {
+        return validatePhone(value);
+    }
+    if (spec.kind === "name") {
+        return validateFullName(value);
+    }
+    if (spec.kind === "long" && value.length < 10) {
+        return "يجب ألا يقل النص عن 10 أحرف.";
+    }
+    return "";
+};
+
+const openFormModal = (title, specs, submitLabel, onValid) => {
+    const modal = createModal(title);
+    const form = document.createElement("form");
+    form.className = "modal-form";
+    form.noValidate = true;
+
+    specs.forEach((spec, index) => {
+        const id = "modal-field-" + index;
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.textContent = spec.label + ":";
+
+        let field;
+        if (spec.type === "select") {
+            if (spec.value && !spec.options.includes(spec.value)) {
+                spec.options.push(spec.value);
+            }
+            field = document.createElement("select");
+            spec.options.forEach((option) => {
+                const item = document.createElement("option");
+                item.value = option;
+                item.textContent = option;
+                field.appendChild(item);
+            });
+        } else if (spec.type === "textarea") {
+            field = document.createElement("textarea");
+            field.rows = 4;
+        } else {
+            field = document.createElement("input");
+            field.type = spec.type;
+        }
+        field.id = id;
+        field.value = spec.value || "";
+        field.disabled = Boolean(spec.disabled);
+        field.addEventListener("input", () => {
+            if (field.classList.contains("input-error")) {
+                showFieldError(field, modalFieldMessage({ input: field, type: spec.type, kind: spec.kind }));
+            }
+        });
+        spec.input = field;
+        form.appendChild(label);
+        form.appendChild(field);
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const submitButton = makeButton(submitLabel, "");
+    submitButton.type = "submit";
+    const cancelButton = makeButton("إلغاء", "btn-secondary");
+    cancelButton.addEventListener("click", modal.close);
+    actions.appendChild(submitButton);
+    actions.appendChild(cancelButton);
+    form.appendChild(actions);
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        let firstInvalid = null;
+        specs.forEach((spec) => {
+            if (spec.disabled) {
+                return;
+            }
+            const message = modalFieldMessage(spec);
+            showFieldError(spec.input, message);
+            if (message && !firstInvalid) {
+                firstInvalid = spec.input;
+            }
+        });
+        if (firstInvalid) {
+            firstInvalid.focus();
+            return;
+        }
+        onValid(specs, modal);
+    });
+
+    modal.body.appendChild(form);
+    const firstEnabled = specs.find((spec) => !spec.disabled);
+    if (firstEnabled) {
+        firstEnabled.input.focus();
+    }
+};
+
+const openEditModal = (row) => {
+    const table = row.closest("table");
+    const kind = tableKind(table);
+    const headers = headersOf(table);
+    const statusOptions = kind === "requests"
+        ? ["قيد المراجعة", "قيد المعالجة", "مقبول", "مرفوض"]
+        : ["نشط", "غير نشط"];
+
+    const cells = dataCells(row);
+    const specs = cells.map((cell, index) => {
+        const header = headers[index] || "";
+        const value = cell.textContent.replace(/\s+/g, " ").trim();
+        const spec = { label: header, value, type: "text", cell, kind: "" };
+        if (cell.querySelector(".status")) {
+            spec.type = "select";
+            spec.options = statusOptions.slice();
+            spec.isStatus = true;
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            spec.type = "date";
+        } else if (header.includes("الهاتف")) {
+            spec.type = "tel";
+        } else if (header.includes("الوصف") || value.length > 45) {
+            spec.type = "textarea";
+            spec.kind = "long";
+        }
+        if (header.includes("الاسم") || header === "اسم المستفيد") {
+            spec.kind = "name";
+        }
+        spec.disabled = index === 0 && kind !== "programs";
+        return spec;
+    });
+
+    openFormModal("تعديل البيانات", specs, "حفظ التعديلات", (values, modal) => {
+        values.forEach((spec) => {
+            if (spec.disabled) {
+                return;
+            }
+            const newValue = spec.input.value.trim();
+            if (spec.isStatus) {
+                const oldLabel = spec.value;
+                spec.cell.textContent = "";
+                spec.cell.appendChild(makeBadge(newValue));
+                if (kind === "requests" && oldLabel !== newValue) {
+                    if (statIndexByStatus[oldLabel]) {
+                        adjustStat(statIndexByStatus[oldLabel], -1);
+                    }
+                    if (statIndexByStatus[newValue]) {
+                        adjustStat(statIndexByStatus[newValue], 1);
+                    }
+                }
+                const toggle = row.querySelector(".btn-warning");
+                if (toggle && kind === "employees") {
+                    toggle.textContent = newValue === "نشط" ? "تعطيل" : "تفعيل";
+                }
+            } else {
+                spec.cell.textContent = newValue;
+            }
+        });
+        modal.close();
+        showTableMessage(table, "تم حفظ التعديلات في العرض التجريبي، وستُحفظ نهائيًا عند ربط النظام بقاعدة البيانات.");
+    });
+};
+
+const openAddProgramModal = () => {
+    const table = tableByKind("programs");
+    if (!table) {
+        showToast("جدول البرامج غير متاح في هذه الصفحة.");
+        return;
+    }
+    const specs = [
+        { label: "اسم البرنامج", value: "", type: "text", kind: "" },
+        { label: "الوصف", value: "", type: "textarea", kind: "long" },
+        { label: "الحالة", value: "نشط", type: "select", options: ["نشط", "غير نشط"], kind: "" }
+    ];
+    openFormModal("إضافة برنامج جديد", specs, "إضافة البرنامج", (values, modal) => {
+        const row = document.createElement("tr");
+        const nameCell = document.createElement("td");
+        nameCell.textContent = values[0].input.value.trim();
+        const descriptionCell = document.createElement("td");
+        descriptionCell.textContent = values[1].input.value.trim();
+        const statusCell = document.createElement("td");
+        statusCell.appendChild(makeBadge(values[2].input.value));
+        const actionsCell = document.createElement("td");
+        actionsCell.appendChild(makeButton("عرض", ""));
+        actionsCell.appendChild(makeButton("تعديل", ""));
+        actionsCell.appendChild(makeButton("حذف", "btn-danger"));
+        [nameCell, descriptionCell, statusCell, actionsCell].forEach((cell) => row.appendChild(cell));
+        table.tBodies[0].appendChild(row);
+        modal.close();
+        showTableMessage(table, "تمت إضافة البرنامج إلى القائمة في العرض التجريبي، وسيُحفظ نهائيًا عند ربط النظام بقاعدة البيانات.");
+    });
+};
+
+const deleteRow = (row) => {
+    if (!window.confirm("هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن العملية.")) {
+        return;
+    }
+    const table = row.closest("table");
+    const kind = tableKind(table);
+    const badge = row.querySelector(".status");
+    const label = badge ? badge.textContent.trim() : "";
+    if (kind === "requests") {
+        adjustStat(0, -1);
+        if (statIndexByStatus[label]) {
+            adjustStat(statIndexByStatus[label], -1);
+        }
+    }
+    if (kind === "beneficiaries") {
+        adjustStat(4, -1);
+    }
+    row.remove();
+    showTableMessage(table, "تم حذف السجل من العرض التجريبي، وسيصبح الحذف دائمًا عند ربط النظام بقاعدة البيانات.");
+};
+
+const toggleEmployeeStatus = (button, row) => {
+    const badge = row.querySelector(".status");
+    if (!badge) {
+        return;
+    }
+    const active = badge.classList.contains("status-active");
+    const question = active ? "هل تريد تعطيل هذا الموظف؟" : "هل تريد تفعيل هذا الموظف؟";
+    if (!window.confirm(question)) {
+        return;
+    }
+    badge.classList.toggle("status-active", !active);
+    badge.classList.toggle("status-inactive", active);
+    badge.textContent = active ? "غير نشط" : "نشط";
+    button.textContent = active ? "تفعيل" : "تعطيل";
+};
+
+const reportKinds = { "تقرير الطلبات": "requests", "تقرير المستفيدين": "beneficiaries" };
+const pendingFeatures = ["تقرير الموظفين", "تعديل معلومات الحساب", "تعديل معلومات الموظف", "تعطيل الموظف"];
+
 document.addEventListener("click", (event) => {
     const button = event.target.closest("button");
-    if (!button || !button.closest("td")) {
+    if (!button || button.closest(".modal")) {
         return;
     }
-    const row = button.closest("tr");
-    const table = button.closest("table");
+    const label = button.textContent.replace(/\s+/g, " ").trim();
+    const cell = button.closest("td");
 
-    if (button.classList.contains("btn-danger")) {
-        if (!window.confirm("هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن العملية.")) {
-            return;
+    if (cell) {
+        const row = cell.closest("tr");
+        if (button.classList.contains("btn-danger")) {
+            deleteRow(row);
+        } else if (button.classList.contains("btn-warning")) {
+            toggleEmployeeStatus(button, row);
+        } else if (label === "عرض") {
+            openViewModal(row);
+        } else if (label === "تعديل") {
+            openEditModal(row);
         }
-        row.remove();
-        showTableMessage(table, "تم حذف السجل من العرض التجريبي، وسيصبح الحذف دائمًا عند ربط النظام بقاعدة البيانات.");
         return;
     }
 
-    if (button.classList.contains("btn-warning")) {
-        const badge = row.querySelector(".status");
-        if (!badge) {
-            return;
-        }
-        const active = badge.classList.contains("status-active");
-        const question = active ? "هل تريد تعطيل هذا الموظف؟" : "هل تريد تفعيل هذا الموظف؟";
-        if (!window.confirm(question)) {
-            return;
-        }
-        badge.classList.toggle("status-active", !active);
-        badge.classList.toggle("status-inactive", active);
-        badge.textContent = active ? "غير نشط" : "نشط";
-        button.textContent = active ? "تفعيل" : "تعطيل";
+    if (label === "إضافة برنامج جديد") {
+        openAddProgramModal();
+    } else if (reportKinds[label]) {
+        downloadReport(reportKinds[label]);
+    } else if (pendingFeatures.includes(label)) {
+        showToast("هذه الميزة ستُفعَّل عند ربط النظام بقاعدة البيانات.");
     }
 });
+
+document.querySelectorAll('input[type="password"]').forEach((input) => {
+    const label = document.querySelector('label[for="' + input.id + '"]');
+    if (!label) {
+        return;
+    }
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "toggle-password";
+    toggle.textContent = "إظهار";
+    toggle.setAttribute("aria-label", "إظهار كلمة المرور");
+    toggle.addEventListener("click", () => {
+        const hidden = input.type === "password";
+        input.type = hidden ? "text" : "password";
+        toggle.textContent = hidden ? "إخفاء" : "إظهار";
+        toggle.setAttribute("aria-label", hidden ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
+    });
+    label.insertAdjacentElement("afterend", toggle);
+});
+
+const passwordScore = (value) => {
+    if (!value) {
+        return 0;
+    }
+    let score = 0;
+    if (value.length >= 8) {
+        score += 1;
+    }
+    if (value.length >= 12) {
+        score += 1;
+    }
+    if (/\p{L}/u.test(value) && /[0-9\u0660-\u0669]/.test(value)) {
+        score += 1;
+    }
+    if (/[^\p{L}0-9\u0660-\u0669\s]/u.test(value) || (/\p{Lu}/u.test(value) && /\p{Ll}/u.test(value))) {
+        score += 1;
+    }
+    if (value.length < 8) {
+        return 1;
+    }
+    return Math.max(1, score);
+};
+
+const strengthLabels = ["", "ضعيفة", "مقبولة", "جيدة", "قوية"];
+const registerPassword = registerForm ? registerForm.querySelector("#password") : null;
+
+if (registerPassword) {
+    const meter = document.createElement("div");
+    meter.className = "password-strength";
+    meter.hidden = true;
+    const track = document.createElement("div");
+    track.className = "strength-track";
+    const bar = document.createElement("span");
+    bar.className = "strength-bar";
+    track.appendChild(bar);
+    const text = document.createElement("span");
+    text.className = "strength-text";
+    meter.appendChild(track);
+    meter.appendChild(text);
+    registerPassword.insertAdjacentElement("afterend", meter);
+
+    const updateMeter = () => {
+        const score = passwordScore(registerPassword.value);
+        meter.hidden = score === 0;
+        meter.className = "password-strength strength-" + score;
+        text.textContent = score ? "قوة كلمة المرور: " + strengthLabels[score] : "";
+    };
+    registerPassword.addEventListener("input", updateMeter);
+    registerForm.addEventListener("reset", () => setTimeout(updateMeter, 0));
+}
+
+const addCounter = (id, max) => {
+    const field = document.getElementById(id);
+    if (!field) {
+        return;
+    }
+    field.maxLength = max;
+    const counter = document.createElement("small");
+    counter.className = "char-counter";
+    field.insertAdjacentElement("afterend", counter);
+    const update = () => {
+        counter.textContent = field.value.length + " / " + max;
+    };
+    field.addEventListener("input", update);
+    field.form.addEventListener("reset", () => setTimeout(update, 0));
+    update();
+};
+
+addCounter("description", 1000);
+addCounter("comment", 1000);
+addCounter("statusNote", 500);
