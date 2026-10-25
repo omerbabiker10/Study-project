@@ -236,6 +236,12 @@ if (registerForm) {
 const userTypeInput = document.getElementById("userType");
 const loginForm = userTypeInput ? userTypeInput.closest("form") : null;
 
+const loginRedirects = {
+    beneficiary: "services.html",
+    employee: "track.html",
+    admin: "admin.html"
+};
+
 if (loginForm) {
     setupForm(
         loginForm,
@@ -243,7 +249,20 @@ if (loginForm) {
             email: validateEmail,
             password: validateLoginPassword
         },
-        "تم التحقق من البيانات بنجاح. تسجيل الدخول الفعلي سيُنفذ لاحقًا عند ربط النظام بالخادم."
+        "تم التحقق من البيانات بنجاح.",
+        (form) => {
+            const target = loginRedirects[form.querySelector("#userType").value];
+            if (!target) {
+                return null;
+            }
+            setTimeout(() => {
+                window.location.href = target;
+            }, 600);
+            return {
+                text: "تم التحقق من البيانات، جارٍ الانتقال إلى الصفحة (عرض تجريبي قبل ربط الخادم).",
+                type: "success"
+            };
+        }
     );
 }
 
@@ -1484,13 +1503,24 @@ const openViewModal = (row) => {
     closeButton.focus();
 };
 
-const modalFieldMessage = (spec) => {
-    const value = spec.input.value.trim();
+const modalFieldMessage = (spec, specs) => {
+    const raw = spec.input.value;
+    const value = raw.trim();
     if (!value) {
         return "هذا الحقل مطلوب.";
     }
+    if (spec.type === "email") {
+        return validateEmail(value);
+    }
     if (spec.type === "tel") {
         return validatePhone(value);
+    }
+    if (spec.kind === "newPassword") {
+        return validateNewPassword(raw);
+    }
+    if (spec.kind === "confirm") {
+        const other = specs[spec.matches];
+        return other && other.input.value !== raw ? "كلمتا المرور غير متطابقتين." : "";
     }
     if (spec.kind === "name") {
         return validateFullName(value);
@@ -1537,8 +1567,13 @@ const openFormModal = (title, specs, submitLabel, onValid) => {
         field.disabled = Boolean(spec.disabled);
         field.addEventListener("input", () => {
             if (field.classList.contains("input-error")) {
-                showFieldError(field, modalFieldMessage({ input: field, type: spec.type, kind: spec.kind }));
+                showFieldError(field, modalFieldMessage(spec, specs));
             }
+            specs.forEach((other) => {
+                if (other !== spec && other.input && other.input.classList.contains("input-error")) {
+                    showFieldError(other.input, modalFieldMessage(other, specs));
+                }
+            });
         });
         spec.input = field;
         form.appendChild(label);
@@ -1562,7 +1597,7 @@ const openFormModal = (title, specs, submitLabel, onValid) => {
             if (spec.disabled) {
                 return;
             }
-            const message = modalFieldMessage(spec);
+            const message = modalFieldMessage(spec, specs);
             showFieldError(spec.input, message);
             if (message && !firstInvalid) {
                 firstInvalid = spec.input;
@@ -1836,3 +1871,161 @@ const addCounter = (id, max) => {
 addCounter("description", 1000);
 addCounter("comment", 1000);
 addCounter("statusNote", 500);
+
+const passwordResetEndpoint = "forgot-password.php";
+const passwordApplyEndpoint = "reset-password.php";
+
+const submitHiddenForm = (action, fields) => {
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = action;
+    Object.keys(fields).forEach((name) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = fields[name];
+        form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+};
+
+const showModalResult = (modal, text, extra) => {
+    modal.body.textContent = "";
+    const message = document.createElement("p");
+    message.className = "form-message form-message-success";
+    message.textContent = text;
+    modal.body.appendChild(message);
+    if (extra) {
+        modal.body.appendChild(extra);
+    }
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeButton = makeButton("إغلاق", "btn-secondary");
+    closeButton.addEventListener("click", modal.close);
+    actions.appendChild(closeButton);
+    modal.body.appendChild(actions);
+    closeButton.focus();
+};
+
+const openForgotPasswordModal = () => {
+    const specs = [{ label: "البريد الإلكتروني", value: "", type: "email", kind: "" }];
+    openFormModal("استعادة كلمة المرور", specs, "إرسال رابط الاستعادة", (values, modal) => {
+        const email = values[0].input.value.trim();
+        if (!demoMode) {
+            submitHiddenForm(passwordResetEndpoint, { email });
+            return;
+        }
+        const hint = document.createElement("p");
+        hint.className = "result-note";
+        hint.appendChild(document.createTextNode("عرض تجريبي: لتجربة خطوة تعيين كلمة المرور الجديدة افتح "));
+        const link = document.createElement("a");
+        link.href = "index.html?reset=demo";
+        link.textContent = "هذا الرابط";
+        hint.appendChild(link);
+        hint.appendChild(document.createTextNode("."));
+        showModalResult(
+            modal,
+            "إن كان البريد مسجلًا لدينا فسيصلك رابط لإعادة تعيين كلمة المرور خلال دقائق، وتنتهي صلاحية الرابط بعد ساعة.",
+            hint
+        );
+    });
+};
+
+const clearResetParam = () => {
+    try {
+        window.history.replaceState({}, "", window.location.pathname);
+    } catch (error) {
+        return;
+    }
+};
+
+const openResetPasswordModal = (token) => {
+    const specs = [
+        { label: "كلمة المرور الجديدة", value: "", type: "password", kind: "newPassword" },
+        { label: "تأكيد كلمة المرور", value: "", type: "password", kind: "confirm", matches: 0 }
+    ];
+    openFormModal("تعيين كلمة مرور جديدة", specs, "حفظ كلمة المرور", (values, modal) => {
+        if (!demoMode) {
+            submitHiddenForm(passwordApplyEndpoint, { token, password: values[0].input.value });
+            return;
+        }
+        clearResetParam();
+        showModalResult(modal, "تم تعيين كلمة المرور الجديدة بنجاح (عرض تجريبي). يمكنك الآن تسجيل الدخول.");
+    });
+};
+
+if (loginForm) {
+    const forgotLink = Array.from(document.querySelectorAll("a")).find((link) =>
+        link.textContent.includes("نسيت كلمة المرور")
+    );
+    if (forgotLink) {
+        forgotLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            openForgotPasswordModal();
+        });
+    }
+    const resetToken = new URLSearchParams(window.location.search).get("reset");
+    if (resetToken) {
+        openResetPasswordModal(resetToken);
+    }
+}
+
+const themeKey = "tayseer-theme";
+
+const readStoredTheme = () => {
+    try {
+        return window.localStorage.getItem(themeKey);
+    } catch (error) {
+        return null;
+    }
+};
+
+const saveTheme = (theme) => {
+    try {
+        window.localStorage.setItem(themeKey, theme);
+    } catch (error) {
+        return;
+    }
+};
+
+const systemPrefersDark = () =>
+    Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+const themeButton = document.createElement("button");
+themeButton.type = "button";
+themeButton.className = "theme-toggle";
+
+const applyTheme = (theme) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    const dark = theme === "dark";
+    themeButton.textContent = dark ? "☀️ الوضع الفاتح" : "🌙 الوضع الداكن";
+    themeButton.setAttribute("aria-label", dark ? "التبديل إلى الوضع الفاتح" : "التبديل إلى الوضع الداكن");
+};
+
+document.documentElement.classList.add("theme-init");
+applyTheme(readStoredTheme() || (systemPrefersDark() ? "dark" : "light"));
+setTimeout(() => document.documentElement.classList.remove("theme-init"), 150);
+
+themeButton.addEventListener("click", () => {
+    const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(next);
+    saveTheme(next);
+});
+
+const pageHeader = document.querySelector("header");
+if (pageHeader) {
+    pageHeader.appendChild(themeButton);
+}
+
+if (window.matchMedia) {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSystemChange = (event) => {
+        if (!readStoredTheme()) {
+            applyTheme(event.matches ? "dark" : "light");
+        }
+    };
+    if (media.addEventListener) {
+        media.addEventListener("change", onSystemChange);
+    }
+}
