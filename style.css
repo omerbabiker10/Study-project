@@ -20,6 +20,57 @@
     --radius: 10px;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 6px 18px rgba(22, 101, 52, 0.12);
+    --heading: #166534;
+    --link: #15803D;
+    --on-accent: #FFFFFF;
+    --input-border: #D1D5DB;
+    --neutral: #6B7280;
+    --neutral-hover: #4B5563;
+    --green-border: #BBF7D0;
+    --card-border: #D1FAE5;
+    --warn-hover: #FEF3C7;
+    --danger-hover: #FEE2E2;
+    --gray-bg: #F3F4F6;
+    --gray-text: #4B5563;
+    --gray-border: #D1D5DB;
+    --zebra: #F9FAFB;
+    --info-bg: #EFF6FF;
+    --info-text: #1D4ED8;
+    --info-border: #BFDBFE;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --green-900: #0A2415;
+    --green-100: #1E3A2B;
+    --green-50: #15261E;
+    --bg: #0E1512;
+    --surface: #16201B;
+    --text: #E5E7EB;
+    --muted: #9CA3AF;
+    --border: #2B3B34;
+    --heading: #86EFAC;
+    --link: #4ADE80;
+    --input-border: #3A4A43;
+    --green-border: #2F5E45;
+    --card-border: #24473A;
+    --danger: #F87171;
+    --danger-bg: #3B1717;
+    --danger-border: #6B2A2A;
+    --danger-hover: #4A1D1D;
+    --warn: #FBBF24;
+    --warn-bg: #3A2C0B;
+    --warn-border: #5E4A14;
+    --warn-hover: #4A3810;
+    --gray-bg: #232E28;
+    --gray-text: #C7D0CB;
+    --gray-border: #3A4A43;
+    --zebra: #1A251F;
+    --info-bg: #14233B;
+    --info-text: #93C5FD;
+    --info-border: #2B4670;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -47,7 +98,7 @@ body {
 
 ::selection {
     background-color: var(--green-100);
-    color: var(--green-900);
+    color: var(--heading);
 }
 
 h1,
@@ -59,22 +110,23 @@ h3 {
 h1 {
     margin: 0;
     font-size: 32px;
-    color: var(--surface);
+    color: var(--on-accent);
 }
 
 h2 {
-    color: var(--green-800);
+    color: var(--heading);
     font-size: 26px;
 }
 
 h3 {
-    color: var(--green-700);
+    color: var(--link);
     font-size: 21px;
 }
 
 header {
+    position: relative;
     background: linear-gradient(135deg, var(--green-800), var(--green-700));
-    color: var(--surface);
+    color: var(--on-accent);
     padding: 25px 20px;
     text-align: center;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
@@ -108,7 +160,7 @@ nav {
 
 nav a {
     display: inline-block;
-    color: var(--surface);
+    color: var(--on-accent);
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
@@ -163,7 +215,7 @@ li {
 }
 
 a {
-    color: var(--green-700);
+    color: var(--link);
 }
 
 main a {
@@ -171,7 +223,7 @@ main a {
 }
 
 main a:hover {
-    color: var(--green-800);
+    color: var(--heading);
 }
 
 main a[href$=".html"] {
@@ -183,7 +235,7 @@ main > section > a[href="index.html"] {
     padding: 10px 22px;
     margin: 8px 0;
     background-color: var(--green-700);
-    color: var(--surface);
+    color: var(--on-accent);
     text-decoration: none;
     border-radius: 7px;
     box-shadow: var(--shadow-sm);
@@ -192,7 +244,7 @@ main > section > a[href="index.html"] {
 
 main > section > a[href="index.html"]:hover {
     background-color: var(--green-800);
-    color: var(--surface);
+    color: var(--on-accent);
     box-shadow: var(--shadow-md);
 }
 
@@ -221,7 +273,7 @@ article:hover {
 
 article h3 {
     margin-top: 0;
-    color: var(--green-800);
+    color: var(--heading);
 }
 
 article p {
@@ -248,7 +300,7 @@ label {
     display: inline-block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: var(--green-800);
+    color: var(--heading);
 }
 
 input,
@@ -259,7 +311,7 @@ textarea {
     max-width: 100%;
     padding: 12px;
     margin-top: 5px;
-    border: 1px solid #D1D5DB;
+    border: 1px solid var(--input-border);
     border-radius: 7px;
     background-color: var(--surface);
     color: var(--text);
@@ -347,7 +399,7 @@ textarea.input-error:focus {
 
 .form-message-success {
     background-color: var(--green-50);
-    color: var(--green-800);
+    color: var(--heading);
     border-color: var(--green-100);
 }
 
@@ -371,7 +423,7 @@ button {
     border: none;
     border-radius: 7px;
     background-color: var(--green-700);
-    color: var(--surface);
+    color: var(--on-accent);
     font-family: inherit;
     font-size: 16px;
     cursor: pointer;
@@ -394,11 +446,11 @@ button:disabled {
 }
 
 button[type="reset"] {
-    background-color: var(--muted);
+    background-color: var(--neutral);
 }
 
 button[type="reset"]:hover {
-    background-color: #4B5563;
+    background-color: var(--neutral-hover);
 }
 
 form button {
@@ -440,7 +492,7 @@ td {
 
 th {
     background-color: var(--green-50);
-    color: var(--green-800);
+    color: var(--heading);
     border-bottom: 2px solid var(--green-700);
 }
 
@@ -449,14 +501,14 @@ td button {
     margin: 3px;
     font-size: 14px;
     background-color: var(--surface);
-    color: var(--green-700);
+    color: var(--link);
     border: 1px solid var(--green-700);
     box-shadow: none;
 }
 
 td button:hover {
     background-color: var(--green-50);
-    color: var(--green-800);
+    color: var(--heading);
     box-shadow: none;
 }
 
@@ -467,7 +519,7 @@ td button.btn-warning {
 }
 
 td button.btn-warning:hover {
-    background-color: #FEF3C7;
+    background-color: var(--warn-hover);
     color: var(--warn);
 }
 
@@ -478,7 +530,7 @@ td button.btn-danger {
 }
 
 td button.btn-danger:hover {
-    background-color: #FEE2E2;
+    background-color: var(--danger-hover);
     color: var(--danger);
 }
 
@@ -495,8 +547,8 @@ td button.btn-danger:hover {
 .status-active,
 .status-approved {
     background-color: var(--green-100);
-    color: var(--green-800);
-    border-color: #BBF7D0;
+    color: var(--heading);
+    border-color: var(--green-border);
 }
 
 .status-pending {
@@ -512,9 +564,9 @@ td button.btn-danger:hover {
 }
 
 .status-inactive {
-    background-color: #F3F4F6;
-    color: #4B5563;
-    border-color: #D1D5DB;
+    background-color: var(--gray-bg);
+    color: var(--gray-text);
+    border-color: var(--gray-border);
 }
 
 dl {
@@ -526,7 +578,7 @@ dl {
 
 dt {
     font-weight: bold;
-    color: var(--green-800);
+    color: var(--heading);
 }
 
 dd {
@@ -540,12 +592,12 @@ footer {
     margin-top: 35px;
     padding: 25px 15px;
     background-color: var(--green-900);
-    color: var(--surface);
+    color: var(--on-accent);
     text-align: center;
 }
 
 footer h3 {
-    color: var(--surface);
+    color: var(--on-accent);
 }
 
 footer p {
@@ -554,7 +606,7 @@ footer p {
 }
 
 footer a {
-    color: var(--surface);
+    color: var(--on-accent);
 }
 
 @media (min-width: 601px) {
@@ -564,7 +616,7 @@ footer a {
     }
 
     main section table:has(thead) tbody tr:nth-child(even) td {
-        background-color: #F9FAFB;
+        background-color: var(--zebra);
     }
 
     main section table:has(thead) tbody tr:hover td {
@@ -605,7 +657,7 @@ footer a {
         font-size: 28px;
         font-weight: bold;
         text-align: center;
-        color: var(--green-800);
+        color: var(--heading);
         background-color: var(--surface);
         border: 1px solid var(--green-100);
         border-top: none;
@@ -721,8 +773,8 @@ footer a {
         width: 100%;
         margin: 0 0 18px;
         padding: 10px;
-        background: #FFFFFF;
-        border: 1px solid #D1FAE5;
+        background: var(--surface);
+        border: 1px solid var(--card-border);
         border-radius: 12px;
         box-shadow: 0 3px 12px rgba(22, 101, 52, 0.08);
     }
@@ -736,8 +788,8 @@ footer a {
         min-width: 0;
         padding: 10px 5px;
         border: none;
-        border-bottom: 1px solid #E5E7EB;
-        background: #FFFFFF;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
         text-align: right;
         overflow-wrap: anywhere;
     }
@@ -797,49 +849,49 @@ footer a {
 
     main section table:not(:has(thead)) tr:nth-child(2) td::before {
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(1)::before {
         content: "رقم الطلب:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(2)::before {
         content: "اسم المستفيد:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(3)::before {
         content: "نوع المساعدة:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(4)::before {
         content: "تاريخ الطلب:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(5)::before {
         content: "الحالة:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
     main section table thead + tbody tr td:nth-child(6)::before {
         content: "العمليات:";
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
@@ -917,7 +969,7 @@ footer a {
 
     main section table thead + tbody tr td::before {
         font-weight: bold;
-        color: #166534;
+        color: var(--heading);
         flex-shrink: 0;
     }
 
@@ -948,9 +1000,9 @@ footer a {
 }
 
 .status-processing {
-    background-color: #EFF6FF;
-    color: #1D4ED8;
-    border-color: #BFDBFE;
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-color: var(--info-border);
 }
 
 input:disabled,
@@ -984,14 +1036,14 @@ textarea:disabled {
     padding: 2px 10px;
     font-size: 14px;
     background-color: var(--surface);
-    color: var(--green-700);
+    color: var(--link);
     border: 1px solid var(--green-100);
     box-shadow: none;
 }
 
 .toggle-password:hover {
     background-color: var(--green-50);
-    color: var(--green-800);
+    color: var(--heading);
     box-shadow: none;
 }
 
@@ -1101,14 +1153,14 @@ body.modal-open {
 
 button.btn-secondary {
     background-color: var(--surface);
-    color: var(--green-700);
+    color: var(--link);
     border: 1px solid var(--green-700);
     box-shadow: none;
 }
 
 button.btn-secondary:hover {
     background-color: var(--green-50);
-    color: var(--green-800);
+    color: var(--heading);
     box-shadow: none;
 }
 
@@ -1121,10 +1173,43 @@ button.btn-secondary:hover {
     padding: 10px 18px;
     transform: translateX(-50%);
     background-color: var(--green-900);
-    color: var(--surface);
+    color: var(--on-accent);
     border-radius: 8px;
     box-shadow: var(--shadow-md);
     font-size: 15px;
     line-height: 1.7;
     text-align: center;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: auto;
+    margin: 0;
+    padding: 5px 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: rgba(255, 255, 255, 0.16);
+    color: var(--on-accent);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: none;
+}
+
+.theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.28);
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .toast {
+    background-color: var(--green-700);
+}
+
+:root[data-theme="dark"] .modal {
+    border: 1px solid var(--border);
+}
+
+.theme-init,
+.theme-init * {
+    transition: none !important;
 }
